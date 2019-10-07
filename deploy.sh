@@ -8,7 +8,7 @@ then
     exit 1
 fi
 
-curl "$4"
+(curl $4;)
 
 TAG=$1
 DOCKER_USERNAME=$2
