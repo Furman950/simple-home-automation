@@ -1,3 +1,4 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 
 namespace SimpleHomeAutomationTests
@@ -11,6 +12,12 @@ namespace SimpleHomeAutomationTests
 
         [Test]
         public void Test1()
+        {
+            Assert.Pass();
+        }
+
+        [Test]
+        public void MyTestMethod()
         {
             Assert.Pass();
         }
