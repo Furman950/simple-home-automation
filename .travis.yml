@@ -9,11 +9,12 @@ script:
 deploy:
   provider: script
   script: 
-   - bash ./docker/deploy.sh $$TRAVIS_TAG $DOCKER_USERNAME $DOCKER_PASSWORD
    - curl $URL_PATH
-  skip_cleanup: true
+   - ./deploy.sh $$TRAVIS_TAG $DOCKER_USERNAME $DOCKER_PASSWORD
+
   on:
     tags: true
+    branch: master
 
 after_success:
  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
@@ -23,3 +24,6 @@ after_failure:
  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
  - chmod +x send.sh
  - ./send.sh failure $WEBHOOK_URL
+
+notifications:
+ email: false
