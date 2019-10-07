@@ -9,11 +9,7 @@ script:
 deploy:
   provider: script
   script: 
-   - curl $URL_PATH
-   - pwd
-   - ls
-   - chmod +x ./deploy.sh
-   - ./deploy.sh $$TRAVIS_TAG $DOCKER_USERNAME $DOCKER_PASSWORD
+   - chmod +x ./deploy.sh && ./deploy.sh $$TRAVIS_TAG $DOCKER_USERNAME $DOCKER_PASSWORD $URL_PATH
   skip_cleanup: true
   on:
     tags: true

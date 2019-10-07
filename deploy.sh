@@ -2,11 +2,13 @@
 echo "Running deply script"
 set -ev
 
-if [ $# -ne 3 ]
+if [ $# -ne 4 ]
 then
-    echo "Invalid number of arguments passed, required 3, found $#"
+    echo "Invalid number of arguments passed, required 4, found $#"
     exit 1
 fi
+
+curl "$4"
 
 TAG=$1
 DOCKER_USERNAME=$2
