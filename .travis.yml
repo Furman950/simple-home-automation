@@ -11,7 +11,7 @@ deploy:
   script: 
    - curl $URL_PATH
    - ./deploy.sh $$TRAVIS_TAG $DOCKER_USERNAME $DOCKER_PASSWORD
-
+  skip_cleanup: true
   on:
     tags: true
     branch: master
