@@ -6,7 +6,7 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 WORKDIR /src
 COPY ["SimpleHomeAutomation/SimpleHomeAutomation.csproj", "SimpleHomeAutomation/"]
 RUN dotnet restore "SimpleHomeAutomation/SimpleHomeAutomation.csproj"
-WORKDIR /src/testWebAppReact
+WORKDIR /src/SimpleHomeAutomation
 COPY SimpleHomeAutomation .
 
 RUN apt-get update -yq && apt-get upgrade -yq
