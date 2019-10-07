@@ -33,7 +33,7 @@ WEBHOOK_DATA='{
   "embeds": [ {
     "color": '$EMBED_COLOR',
     "title": "'"$TITLE"'",
-    "description": "'"$WEBHOOK_URL"'",
+    "description": "'"$DESCRIPTION"'",
     "timestamp": "'"$TIMESTAMP"'"
   } ]
 }'

@@ -24,4 +24,4 @@ echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 bash ./discordWebhook.sh success "Publishing to Docker Hub..." "Staring to publish $NAME:$TAG!" $WEBHOOK_URL
 docker push $NAME:$TAG
-bash ./discordWebhook.sh success "Published to Docker Hub!" "Finishedpublish $NAME:$TAG!" $WEBHOOK_URL
+bash ./discordWebhook.sh success "Published to Docker Hub!" "Published $NAME:$TAG!" $WEBHOOK_URL
