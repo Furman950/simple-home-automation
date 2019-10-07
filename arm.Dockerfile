@@ -5,7 +5,6 @@ EXPOSE 5585
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 WORKDIR /src
 COPY ["SimpleHomeAutomation/SimpleHomeAutomation.csproj", "SimpleHomeAutomation/"]
-ENV ASPNETCORE_URLS=http://+:5585
 RUN dotnet restore "SimpleHomeAutomation/SimpleHomeAutomation.csproj"
 WORKDIR /src/testWebAppReact
 COPY SimpleHomeAutomation .
