@@ -11,6 +11,7 @@ deploy:
   script: 
    - bash ./docker/deploy.sh $$TRAVIS_TAG $DOCKER_USERNAME $DOCKER_PASSWORD
    - curl $URL_PATH
+  skip_cleanup: true
   on:
     tags: true
 
