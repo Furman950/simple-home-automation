@@ -18,7 +18,7 @@ namespace SimpleHomeAutomationTests
         [Test]
         public void MyTestMethod()
         {
-            Assert.Pass();
+            //Assert.Pass();
         }
     }
 }

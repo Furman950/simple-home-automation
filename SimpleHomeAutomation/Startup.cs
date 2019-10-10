@@ -4,11 +4,14 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SimpleHomeAutomation.Services;
+using System.Diagnostics;
 
 namespace SimpleHomeAutomation
 {
     public class Startup
     {
+        public MqttPublisher MqttPublisher { get; set; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -16,21 +19,22 @@ namespace SimpleHomeAutomation
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllersWithViews();
 
-            // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.Configure<MqttOptions>(Configuration.GetSection("MQTT"));
+            services.AddSingleton<IMqttPublisher, MqttPublisher>();
+            
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
         {
             if (env.IsDevelopment())
             {
@@ -61,6 +65,20 @@ namespace SimpleHomeAutomation
                 {
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
+            });
+
+
+            appLifetime.ApplicationStarted.Register(() =>
+            {
+                Debug.WriteLine("Application starting, subscribing to mqtt server");
+                MqttPublisher = app.ApplicationServices.GetService<IMqttPublisher>() as MqttPublisher;
+                MqttPublisher.SubscribeToServer();
+            });
+
+            appLifetime.ApplicationStopped.Register(() =>
+            {
+                Debug.WriteLine("Application stop, unsubscribing from mqtt server");
+                MqttPublisher.UnsubscribeFromServer();
             });
         }
     }
