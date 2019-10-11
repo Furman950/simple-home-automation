@@ -30,8 +30,8 @@ namespace SimpleHomeAutomation
             });
 
             services.Configure<MqttOptions>(Configuration.GetSection("MQTT"));
+            services.AddTransient<IScheduledTask, ScheduledTaskService>();
             services.AddSingleton<IMqttPublisher, MqttPublisher>();
-            
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
@@ -39,9 +39,11 @@ namespace SimpleHomeAutomation
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseHttpStatusCodeExceptionMiddleware();
             }
             else
             {
+                app.UseHttpStatusCodeExceptionMiddleware();
                 app.UseExceptionHandler("/Error");
             }
 
@@ -54,7 +56,7 @@ namespace SimpleHomeAutomation
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                    pattern: "{controller}/{action}/{id?}");
             });
 
             app.UseSpa(spa =>

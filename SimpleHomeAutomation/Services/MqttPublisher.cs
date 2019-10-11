@@ -1,7 +1,10 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using MQTTnet;
 using MQTTnet.Client;
+using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
+using SimpleHomeAutomation.Exceptions;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -14,7 +17,6 @@ namespace SimpleHomeAutomation.Services
         private readonly MqttOptions _mqttOptions;
         private readonly IMqttFactory _mqttFactory;
         private IMqttClient _mqttClient;
-
 
         public MqttPublisher(IOptions<MqttOptions> mqttOptions)
         {
@@ -33,28 +35,37 @@ namespace SimpleHomeAutomation.Services
 
             _mqttClient = _mqttFactory.CreateMqttClient();
 
-            await _mqttClient.ConnectAsync(options, CancellationToken.None);
-
             _mqttClient.UseDisconnectedHandler(async e =>
-           {
-               Debug.WriteLine("### DISCONNECTED FROM SERVER ###");
-               await Task.Delay(TimeSpan.FromSeconds(5));
+            {
+                Debug.WriteLine("### DISCONNECTED FROM SERVER ###");
+                await Task.Delay(TimeSpan.FromSeconds(5));
 
-               try
-               {
-                   await _mqttClient.ConnectAsync(options, CancellationToken.None);
-               }
-               catch
-               {
-                   Debug.WriteLine("### RECONNECTING FAILED ###");
-               }
-           });
+                try
+                {
+                    await _mqttClient.ConnectAsync(options, CancellationToken.None);
+                }
+                catch
+                {
+                    Debug.WriteLine("### RECONNECTING FAILED ###");
+                }
+            });
 
+            try
+            {
+                await _mqttClient.ConnectAsync(options, CancellationToken.None);
+            }
+            catch
+            {
+                Debug.WriteLine("Failed to connect to mqtt broker");
+            }
         }
 
         public async void UnsubscribeFromServer()
         {
-            await _mqttClient.DisconnectAsync();
+            if (_mqttClient.IsConnected)
+            {
+                await _mqttClient.DisconnectAsync();
+            }
         }
 
         public void PublishMessage(string message, string topic)
@@ -63,6 +74,9 @@ namespace SimpleHomeAutomation.Services
                 .WithTopic(topic)
                 .WithPayload(message)
                 .Build();
+
+            if (!_mqttClient.IsConnected)
+                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, "Cannot connect to MQTT broker(server). Usually means that the MQTT broker(server) is not running");
 
             _mqttClient.PublishAsync(mqttMessage);
         }
