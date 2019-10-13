@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SimpleHomeAutomation.Models;
 using SimpleHomeAutomation.Services;
@@ -16,9 +17,9 @@ namespace SimpleHomeAutomation.Controllers
         }
 
         [HttpGet]
-        public List<ScheduledTask> GetAll()
+        public async Task<List<List<ScheduledTask>>> GetAll()
         {
-            return _scheduleTaskService.GetAllScheduledTasks();
+            return await _scheduleTaskService.GetAllScheduledTasks();
         }
 
         [HttpGet]

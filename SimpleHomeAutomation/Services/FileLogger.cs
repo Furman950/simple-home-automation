@@ -35,7 +35,7 @@ namespace SimpleHomeAutomation
         public async void Log(string text)
         {
             Debug.WriteLine("Should write to text");
-            byte[] encodedText = Encoding.Unicode.GetBytes($"{DateTime.Now} {text}\n");
+            byte[] encodedText = Encoding.Unicode.GetBytes($"{DateTime.Now} - {text}\n");
             await fileStream.WriteAsync(encodedText, 0, encodedText.Length);
             await fileStream.FlushAsync();
         }

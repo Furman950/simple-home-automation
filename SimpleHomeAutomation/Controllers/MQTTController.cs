@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SimpleHomeAutomation.Models;
 using SimpleHomeAutomation.Services;
+using System.Threading.Tasks;
 
 namespace SimpleHomeAutomation.Controllers
 {
@@ -17,9 +18,9 @@ namespace SimpleHomeAutomation.Controllers
 
         [HttpPost]
         [Route("publish")]
-        public IActionResult Publish([FromBody] MQTTMessage mqttMessage)
+        public async Task<IActionResult> Publish([FromBody] MQTTMessage mqttMessage)
         {
-            mqttPublisher.PublishMessage(mqttMessage.Message, mqttMessage.Topic);
+            await mqttPublisher.PublishMessage(mqttMessage.Message, mqttMessage.Topic);
             return Ok();
         }
     }

@@ -21,8 +21,15 @@ namespace SimpleHomeAutomation.QuartJobs
                 return;
             }
 
-            logger.Log("Publishing message from a scheduled task");
-            mqttPublisher.PublishMessage("scheduledJob", "scheduledJobTopic");
+            IJobDetail job = context.JobDetail;
+            string message = job.JobDataMap.GetString(nameof(message));
+            string topic = job.JobDataMap.GetString(nameof(topic));
+            string name = job.Key.Name;
+            string group = job.Key.Group;
+            
+            
+            await mqttPublisher.PublishMessage(message, topic);
+            logger.Log($"Published message from Taks: {name} in Group: {group}");
         }
     }
 }

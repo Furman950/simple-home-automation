@@ -8,6 +8,6 @@ namespace SimpleHomeAutomation.Services
 {
     public interface IMqttPublisher
     {
-        void PublishMessage(string message, string topic);
+        Task PublishMessage(string message, string topic);
     }
 }

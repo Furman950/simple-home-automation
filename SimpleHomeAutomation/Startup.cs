@@ -38,7 +38,7 @@ namespace SimpleHomeAutomation
             services.AddTransient<ScheduledTaskJob>();
             services.AddSingleton<IMqttPublisher, MqttPublisher>();
             
-            services.AddSingleton<ILogger, FileLogger>();
+            services.AddSingleton<ILogger, ConsoleLogger>();
             
 
         }

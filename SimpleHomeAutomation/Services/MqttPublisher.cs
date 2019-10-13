@@ -71,7 +71,7 @@ namespace SimpleHomeAutomation.Services
             }
         }
 
-        public void PublishMessage(string message, string topic)
+        public async Task PublishMessage(string message, string topic)
         {
             var mqttMessage = new MqttApplicationMessageBuilder()
                 .WithTopic(topic)
@@ -80,12 +80,12 @@ namespace SimpleHomeAutomation.Services
 
             if (!mqttClient.IsConnected)
             {
-                logger.Log("Cannot publish message because the MQTT broker(server) is not connected");
-                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, "Cannot connect to MQTT broker(server). Usually means that the MQTT broker(server) is not running or IP address of the broker is incorrect");
+                String errorMsg = "Cannot connect to MQTT broker(server). Usually means that the MQTT broker(server) is not running or IP address of the broker is incorrect";
+                logger.Log(errorMsg);
+                throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, errorMsg);
             }
                 
-
-             mqttClient.PublishAsync(mqttMessage);
+             await mqttClient.PublishAsync(mqttMessage);
         }
     }
 }
