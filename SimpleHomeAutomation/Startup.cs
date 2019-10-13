@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Quartz;
+using SimpleHomeAutomation.QuartJobs;
 using SimpleHomeAutomation.Services;
 using System.Diagnostics;
 
@@ -12,6 +14,7 @@ namespace SimpleHomeAutomation
     public class Startup
     {
         public MqttPublisher MqttPublisher { get; set; }
+        public ScheduledTaskService ScheduledTaskService { get; set; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -30,8 +33,14 @@ namespace SimpleHomeAutomation
             });
 
             services.Configure<MqttOptions>(Configuration.GetSection("MQTT"));
-            services.AddTransient<IScheduledTask, ScheduledTaskService>();
+
+            services.AddSingleton<IScheduledTask, ScheduledTaskService>();
+            services.AddTransient<ScheduledTaskJob>();
             services.AddSingleton<IMqttPublisher, MqttPublisher>();
+            
+            services.AddSingleton<ILogger, FileLogger>();
+            
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
@@ -72,15 +81,23 @@ namespace SimpleHomeAutomation
 
             appLifetime.ApplicationStarted.Register(() =>
             {
+                
+                ScheduledTaskService = app.ApplicationServices.GetService<IScheduledTask>() as ScheduledTaskService;
+                ScheduledTaskService.StartScheduler();
+
                 Debug.WriteLine("Application starting, subscribing to mqtt server");
                 MqttPublisher = app.ApplicationServices.GetService<IMqttPublisher>() as MqttPublisher;
                 MqttPublisher.SubscribeToServer();
+
+                
             });
 
             appLifetime.ApplicationStopped.Register(() =>
             {
                 Debug.WriteLine("Application stop, unsubscribing from mqtt server");
+                ScheduledTaskService.StopScheduler();
                 MqttPublisher.UnsubscribeFromServer();
+                
             });
         }
     }

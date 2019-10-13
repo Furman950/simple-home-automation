@@ -9,17 +9,17 @@ namespace SimpleHomeAutomation.Controllers
     public class MQTTController : ControllerBase
     {
 
-        private readonly IMqttPublisher _mqttPublisher;
+        private readonly IMqttPublisher mqttPublisher;
         public MQTTController(IMqttPublisher mqttPublisher)
         {
-            _mqttPublisher = mqttPublisher;
+            this.mqttPublisher = mqttPublisher;
         }
 
         [HttpPost]
         [Route("publish")]
         public IActionResult Publish([FromBody] MQTTMessage mqttMessage)
         {
-            _mqttPublisher.PublishMessage(mqttMessage.Message, mqttMessage.Topic);
+            mqttPublisher.PublishMessage(mqttMessage.Message, mqttMessage.Topic);
             return Ok();
         }
     }

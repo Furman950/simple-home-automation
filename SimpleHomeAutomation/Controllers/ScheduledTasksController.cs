@@ -28,6 +28,7 @@ namespace SimpleHomeAutomation.Controllers
         }
 
         [HttpPost]
+        [Route("create")]
         public IActionResult Create(ScheduledTask scheduleTask)
         {
             _scheduleTaskService.CreateScheduledTask(scheduleTask);
