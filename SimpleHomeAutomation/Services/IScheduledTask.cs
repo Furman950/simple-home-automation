@@ -1,7 +1,5 @@
 ﻿using SimpleHomeAutomation.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SimpleHomeAutomation.Services
@@ -9,9 +7,9 @@ namespace SimpleHomeAutomation.Services
     public interface IScheduledTask
     {
         Task<List<List<ScheduledTask>>> GetAllScheduledTasks();
-        ScheduledTask GetScheduledTask(string id);
-        void CreateScheduledTask(ScheduledTask scheduleTask);
-        void DeleteScheduledTask(string id);
-        void UpdateScheduledTask(ScheduledTask scheduleTask);
+        Task<ScheduledTask> GetScheduledTask(string name, string group);
+        Task CreateScheduledTask(ScheduledTask scheduleTask);
+        Task DeleteScheduledTask(string name, string group);
+        Task UpdateScheduledTask(ScheduledTask scheduleTask);
     }
 }

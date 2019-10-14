@@ -10,29 +10,48 @@ namespace SimpleHomeAutomation.Controllers
     [ApiController]
     public class ScheduledTasksController : ControllerBase
     {
-        private readonly IScheduledTask _scheduleTaskService;
+        private readonly IScheduledTask scheduleTaskService;
         public ScheduledTasksController(IScheduledTask scheduleTaskService)
         {
-            _scheduleTaskService = scheduleTaskService;
+            this.scheduleTaskService = scheduleTaskService;
         }
 
+
         [HttpGet]
+        [Route("getAll")]
         public async Task<List<List<ScheduledTask>>> GetAll()
         {
-            return await _scheduleTaskService.GetAllScheduledTasks();
+            return await scheduleTaskService.GetAllScheduledTasks();
         }
 
         [HttpGet]
-        public ScheduledTask Get(string id)
+        [Route("get")]
+        public async Task<ScheduledTask> Get([FromBody] JobInfo jobInfo)
         {
-            return _scheduleTaskService.GetScheduledTask(id);
+            return await scheduleTaskService.GetScheduledTask(jobInfo.Name, jobInfo.Group);
         }
 
         [HttpPost]
         [Route("create")]
-        public IActionResult Create(ScheduledTask scheduleTask)
+        public async Task<IActionResult> Create([FromBody] ScheduledTask scheduleTask)
         {
-            _scheduleTaskService.CreateScheduledTask(scheduleTask);
+            await scheduleTaskService.CreateScheduledTask(scheduleTask);
+            return Ok();
+        }
+
+        [HttpDelete]
+        [Route("delete")]
+        public async Task<IActionResult> Delete([FromBody] JobInfo jobInfo)
+        {
+            await scheduleTaskService.DeleteScheduledTask(jobInfo.Name, jobInfo.Group);
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("update")]
+        public async Task<IActionResult> Update([FromBody] ScheduledTask scheduledTask)
+        {
+            await scheduleTaskService.UpdateScheduledTask(scheduledTask);
             return Ok();
         }
     }

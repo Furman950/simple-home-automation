@@ -9,7 +9,7 @@ namespace SimpleHomeAutomation.Models
         [Required]
         public string Name { get; set; }
         [Required]
-        public string Group { get; set; } = "Group 1";
+        public string Group { get; set; } = "Group1";
 
         [CronValidator(ErrorMessage = "Crons have to be in a list or one of the crons provided is invalid!")]
         public List<string> Crons { get; set; }

@@ -5,15 +5,16 @@ using Quartz;
 using Quartz.Impl;
 using SimpleHomeAutomation.Models;
 using SimpleHomeAutomation.QuartJobs;
-using System.Linq;
 using System.Threading.Tasks;
 using Quartz.Impl.Matchers;
+using SimpleHomeAutomation.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace SimpleHomeAutomation.Services
 {
     public class ScheduledTaskService : IScheduledTask
     {
-
+        #region Setup
         private readonly IServiceProvider serviceProvider;
         private readonly ILogger fileLogger;
         private IScheduler scheduler;
@@ -51,7 +52,9 @@ namespace SimpleHomeAutomation.Services
 
             await scheduler.Shutdown();
         }
-        public void CreateScheduledTask(ScheduledTask scheduleTask)
+        #endregion 
+
+        public async Task CreateScheduledTask(ScheduledTask scheduleTask)
         {
             fileLogger.Log($"Creating a new Scheduled Task -> {scheduleTask.Name}");
             IJobDetail job = JobBuilder.Create<ScheduledTaskJob>()
@@ -60,7 +63,7 @@ namespace SimpleHomeAutomation.Services
                 .UsingJobData(TOPIC, scheduleTask.mqttMessage.Topic)
                 .Build();
 
-            Action<string> action = cron =>
+            foreach(var cron in scheduleTask.Crons)
             {
                 ITrigger trigger = TriggerBuilder.Create()
                    .WithIdentity(Guid.NewGuid().ToString(), scheduleTask.Group)
@@ -68,17 +71,19 @@ namespace SimpleHomeAutomation.Services
                    .WithCronSchedule(cron)
                    .Build();
 
-                scheduler.ScheduleJob(job, trigger);
+                await scheduler.ScheduleJob(job, trigger);
+            }
 
-            };
-
-            scheduleTask.Crons.ForEach(action);
-            
         }
 
-        public void DeleteScheduledTask(string id)
+        public async Task DeleteScheduledTask(string name, string group)
         {
-            throw new NotImplementedException();
+            var jobKey = new JobKey(name, group);
+            IJobDetail jobDetail = await scheduler.GetJobDetail(jobKey);
+            if (jobDetail is null)
+                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Job with Name: '{name}' and Group: '{group}' does not exist!");
+
+            await scheduler.DeleteJob(jobKey);
         }
 
         public async Task<List<List<ScheduledTask>>> GetAllScheduledTasks()
@@ -97,26 +102,26 @@ namespace SimpleHomeAutomation.Services
 
                 foreach (var jobKey in jobKeys)
                 {
-                    var detail = await scheduler.GetJobDetail(jobKey);
+                    var jobDetail = await scheduler.GetJobDetail(jobKey);
                     var triggers = await scheduler.GetTriggersOfJob(jobKey);
 
-                    var triggerList = new List<string>();
-                    
+                    var cronsList = new List<string>();
+
                     foreach (ICronTrigger trigger in triggers)
                     {
-                        
-                        triggerList.Add(trigger.CronExpressionString);
+
+                        cronsList.Add(trigger.CronExpressionString);
                     }
 
                     list.Add(new ScheduledTask
                     {
                         Name = jobKey.Name,
                         Group = group,
-                        Crons = triggerList,
+                        Crons = cronsList,
                         mqttMessage = new MQTTMessage
                         {
-                            Message = detail.JobDataMap.GetString(MESSAGE),
-                            Topic = detail.JobDataMap.GetString(TOPIC)
+                            Message = jobDetail.JobDataMap.GetString(MESSAGE),
+                            Topic = jobDetail.JobDataMap.GetString(TOPIC)
                         }
 
                     });
@@ -129,14 +134,37 @@ namespace SimpleHomeAutomation.Services
 
         }
 
-        public ScheduledTask GetScheduledTask(string id)
+        public async Task<ScheduledTask> GetScheduledTask(string name, string group)
         {
-            throw new NotImplementedException();
+            JobKey jobKey = new JobKey(name, group);
+            IJobDetail jobDetail = await scheduler.GetJobDetail(jobKey);
+            var triggers = await scheduler.GetTriggersOfJob(jobKey);
+            var cronsList = new List<string>();
+
+            foreach (ICronTrigger trigger in triggers)
+            {
+                cronsList.Add(trigger.CronExpressionString);
+            }
+
+
+
+            return new ScheduledTask
+            {
+                Name = name,
+                Group = group,
+                Crons = cronsList,
+                mqttMessage = new MQTTMessage
+                {
+                    Message = jobDetail.JobDataMap.GetString(MESSAGE),
+                    Topic = jobDetail.JobDataMap.GetString(TOPIC)
+                }
+            };
         }
 
-        public void UpdateScheduledTask(ScheduledTask scheduleTask)
+        public async Task UpdateScheduledTask(ScheduledTask scheduleTask)
         {
-            throw new NotImplementedException();
+            await DeleteScheduledTask(scheduleTask.Name, scheduleTask.Group);
+            await CreateScheduledTask(scheduleTask);
         }
     }
 }
