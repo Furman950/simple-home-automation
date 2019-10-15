@@ -56,14 +56,14 @@ namespace SimpleHomeAutomation.Services
 
         public async Task CreateScheduledTask(ScheduledTask scheduleTask)
         {
-            fileLogger.Log($"Creating a new Scheduled Task -> {scheduleTask.Name}");
+            fileLogger.Log($"Creating Scheduled Task -> {scheduleTask.Name}");
             IJobDetail job = JobBuilder.Create<ScheduledTaskJob>()
                 .WithIdentity(scheduleTask.Name, scheduleTask.Group)
                 .UsingJobData(MESSAGE, scheduleTask.mqttMessage.Message)
                 .UsingJobData(TOPIC, scheduleTask.mqttMessage.Topic)
                 .Build();
 
-            foreach(var cron in scheduleTask.Crons)
+            foreach (var cron in scheduleTask.Crons)
             {
                 ITrigger trigger = TriggerBuilder.Create()
                    .WithIdentity(Guid.NewGuid().ToString(), scheduleTask.Group)
@@ -73,7 +73,6 @@ namespace SimpleHomeAutomation.Services
 
                 await scheduler.ScheduleJob(job, trigger);
             }
-
         }
 
         public async Task DeleteScheduledTask(string name, string group)
@@ -137,7 +136,9 @@ namespace SimpleHomeAutomation.Services
         public async Task<ScheduledTask> GetScheduledTask(string name, string group)
         {
             JobKey jobKey = new JobKey(name, group);
-            IJobDetail jobDetail = await scheduler.GetJobDetail(jobKey);
+            IJobDetail jobDetail = await scheduler.GetJobDetail(jobKey) ??
+                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Job with Name: '{name}' and Group: '{group}' does not exist!");
+
             var triggers = await scheduler.GetTriggersOfJob(jobKey);
             var cronsList = new List<string>();
 
@@ -145,8 +146,6 @@ namespace SimpleHomeAutomation.Services
             {
                 cronsList.Add(trigger.CronExpressionString);
             }
-
-
 
             return new ScheduledTask
             {

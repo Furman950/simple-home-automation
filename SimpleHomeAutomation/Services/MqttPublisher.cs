@@ -5,7 +5,6 @@ using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using SimpleHomeAutomation.Exceptions;
 using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,7 +29,7 @@ namespace SimpleHomeAutomation.Services
             logger.Log($"Port: {mqttOptions.Value.Port}");
         }
 
-        public async void SubscribeToServer()
+        public async Task SubscribeToServer()
         {
             var options = new MqttClientOptionsBuilder()
                 .WithTcpServer(mqttOptions.Host, mqttOptions.Port)
@@ -38,29 +37,26 @@ namespace SimpleHomeAutomation.Services
 
             mqttClient = mqttFactory.CreateMqttClient();
 
-            mqttClient.UseDisconnectedHandler(async e =>
+            Func<IMqttClientOptions, string, Task> connectedToMqttServer = async (options, errorMessage) =>
             {
-                logger.Log("### DISCONNECTED FROM SERVER ###");
-                await Task.Delay(TimeSpan.FromSeconds(5));
-
                 try
                 {
                     await mqttClient.ConnectAsync(options, CancellationToken.None);
                 }
                 catch
                 {
-                    logger.Log("### RECONNECTING FAILED ###");
+                    logger.Log(errorMessage);
                 }
+            };
+
+            mqttClient.UseDisconnectedHandler(async e =>
+            {
+                logger.Log("### DISCONNECTED FROM SERVER ###");
+                await Task.Delay(TimeSpan.FromSeconds(5));
+                await connectedToMqttServer.Invoke(options, "### RECONNECTING FAILED ###");
             });
 
-            try
-            {
-                await mqttClient.ConnectAsync(options, CancellationToken.None);
-            }
-            catch
-            {
-                logger.Log("Failed to connect to mqtt broker");
-            }
+            await connectedToMqttServer.Invoke(options, "Failed to connect to MQTT Broker");
         }
 
         public async void UnsubscribeFromServer()
@@ -84,8 +80,8 @@ namespace SimpleHomeAutomation.Services
                 logger.Log(errorMsg);
                 throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, errorMsg);
             }
-                
-             await mqttClient.PublishAsync(mqttMessage);
+
+            await mqttClient.PublishAsync(mqttMessage);
         }
     }
 }

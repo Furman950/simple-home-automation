@@ -1,4 +1,9 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
+using SimpleHomeAutomation.Exceptions;
+using SimpleHomeAutomation.Services;
+using System.Threading.Tasks;
 
 namespace SimpleHomeAutomationTests
 {
@@ -10,15 +15,18 @@ namespace SimpleHomeAutomationTests
         }
 
         [Test]
-        public void Test1()
+        public async Task PublishMessage_InvalidHost_ThrowsHttpStatusCodeException()
         {
-            Assert.Pass();
-        }
+            MqttOptions options = new MqttOptions { Host = "0.0.0.0", Port = 1883 };
+            IOptions<MqttOptions> mqttOptions = Options.Create(options);
+            
+            MqttPublisher mqttPublisher = new MqttPublisher(mqttOptions, new ConsoleLogger());
+            await mqttPublisher.SubscribeToServer();
 
-        [Test]
-        public void MyTestMethod()
-        {
-            //Assert.Pass();
+            var exception = Assert.ThrowsAsync<HttpStatusCodeException>( () => mqttPublisher.PublishMessage("thisShouldFail", "this/should/fail"));
+
+            Assert.That(exception.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+
         }
     }
 }

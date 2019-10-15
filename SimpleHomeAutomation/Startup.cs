@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Quartz;
 using SimpleHomeAutomation.QuartJobs;
 using SimpleHomeAutomation.Services;
 using System.Diagnostics;
