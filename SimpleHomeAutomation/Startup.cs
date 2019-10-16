@@ -37,9 +37,7 @@ namespace SimpleHomeAutomation
             services.AddTransient<ScheduledTaskJob>();
             services.AddSingleton<IMqttPublisher, MqttPublisher>();
             
-            services.AddSingleton<ILogger, ConsoleLogger>();
-            
-
+            services.AddSingleton<ILogger, FileLogger>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)
@@ -77,26 +75,10 @@ namespace SimpleHomeAutomation
                 }
             });
 
-
-            appLifetime.ApplicationStarted.Register(() =>
+            appLifetime.ApplicationStopped.Register(async () =>
             {
-                
-                ScheduledTaskService = app.ApplicationServices.GetService<IScheduledTask>() as ScheduledTaskService;
-                ScheduledTaskService.StartScheduler();
-
-                Debug.WriteLine("Application starting, subscribing to mqtt server");
-                MqttPublisher = app.ApplicationServices.GetService<IMqttPublisher>() as MqttPublisher;
-                MqttPublisher.SubscribeToServer();
-
-                
-            });
-
-            appLifetime.ApplicationStopped.Register(() =>
-            {
-                Debug.WriteLine("Application stop, unsubscribing from mqtt server");
-                ScheduledTaskService.StopScheduler();
-                MqttPublisher.UnsubscribeFromServer();
-                
+                await ScheduledTaskService.StopScheduler();
+                await MqttPublisher.UnsubscribeFromServer();
             });
         }
     }

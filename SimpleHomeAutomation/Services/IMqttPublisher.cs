@@ -9,5 +9,7 @@ namespace SimpleHomeAutomation.Services
     public interface IMqttPublisher
     {
         Task PublishMessage(string message, string topic);
+        Task SubscribeToServer();
+        Task UnsubscribeFromServer();
     }
 }

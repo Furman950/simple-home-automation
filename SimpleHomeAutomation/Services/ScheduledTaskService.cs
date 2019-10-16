@@ -20,21 +20,25 @@ namespace SimpleHomeAutomation.Services
         #region Setup
         private readonly IServiceProvider serviceProvider;
         private readonly ILogger logger;
-        private readonly string path;
+        private readonly string filePath;
         private IScheduler scheduler;
 
         private const string MESSAGE = "message";
         private const string TOPIC = "topic";
 
-
-
         public ScheduledTaskService(IServiceProvider serviceProvider, ILogger logger, IWebHostEnvironment webHostEnvironment)
         {
             this.serviceProvider = serviceProvider;
             this.logger = logger;
-            path = webHostEnvironment.ContentRootPath + "\\config";
+            this.filePath = Path.Combine(webHostEnvironment.ContentRootPath, "config", "scheduledTasks.json");
+
+            Directory.CreateDirectory(Path.Combine(webHostEnvironment.ContentRootPath, "config"));
+            if (!File.Exists(this.filePath))
+            {
+                File.Create(this.filePath).Close();
+            }
         }
-        public void StartScheduler()
+        public async Task StartScheduler()
         {
             NameValueCollection props = new NameValueCollection
             {
@@ -45,10 +49,34 @@ namespace SimpleHomeAutomation.Services
 
             scheduler = factory.GetScheduler().Result;
             scheduler.JobFactory = new JobFactory(serviceProvider);
-            scheduler.Start();
+            await scheduler.Start();
+            await StartUpPersistedJobs();
         }
 
-        public async void StopScheduler()
+        private async Task StartUpPersistedJobs()
+        {
+            string json;
+
+            using StreamReader reader = File.OpenText(this.filePath);
+            json = reader.ReadToEnd();
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                logger.Log("No Scheduled Tasks found");
+                return;
+            }
+
+            List<List<ScheduledTask>> scheduledTasksList = JsonConvert.DeserializeObject<List<List<ScheduledTask>>>(json);
+
+            foreach (var list in scheduledTasksList)
+            {
+                foreach (var scheduledTask in list)
+                {
+                    await CreateScheduledTask(scheduledTask);
+                }
+            }
+        }
+
+        public async Task StopScheduler()
         {
             if (scheduler is null)
             {
@@ -61,6 +89,9 @@ namespace SimpleHomeAutomation.Services
 
         public async Task CreateScheduledTask(ScheduledTask scheduleTask)
         {
+            if (await JobExists(scheduleTask.Name, scheduleTask.Group))
+                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Job with Name: '{scheduleTask.Name}' and Group: '{scheduleTask.Group}' already exist!");
+                
             logger.Log($"Creating Scheduled Task -> {scheduleTask.Name}");
             IJobDetail job = JobBuilder.Create<ScheduledTaskJob>()
                 .WithIdentity(scheduleTask.Name, scheduleTask.Group)
@@ -76,17 +107,17 @@ namespace SimpleHomeAutomation.Services
                    .WithCronSchedule(cron)
                    .Build();
 
+                logger.Log($"Scheduling job -> With Name: '{scheduleTask.Name}', Group: '{scheduleTask.Group}");
                 await scheduler.ScheduleJob(job, trigger);
             }
         }
 
         public async Task DeleteScheduledTask(string name, string group)
         {
-            var jobKey = new JobKey(name, group);
-            IJobDetail jobDetail = await scheduler.GetJobDetail(jobKey);
-            if (jobDetail is null)
+            bool jobExists = await JobExists(name, group);
+            if (!jobExists)
                 throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Job with Name: '{name}' and Group: '{group}' does not exist!");
-
+            var jobKey = new JobKey(name, group);
             await scheduler.DeleteJob(jobKey);
         }
 
@@ -176,8 +207,13 @@ namespace SimpleHomeAutomation.Services
             List<List<ScheduledTask>> scheduledTasks = await GetAllScheduledTasks();
             string json = JsonConvert.SerializeObject(scheduledTasks);
 
-            using StreamWriter writer = File.CreateText($"{path}\\scheduledTasks.json");
+            using StreamWriter writer = File.CreateText(this.filePath);
             await writer.WriteAsync(json);
+        }
+
+        public async Task<bool> JobExists(string name, string group)
+        {
+            return await scheduler.CheckExists(new JobKey(name, group));
         }
     }
 }

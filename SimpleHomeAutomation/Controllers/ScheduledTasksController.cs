@@ -16,7 +16,6 @@ namespace SimpleHomeAutomation.Controllers
             this.scheduleTaskService = scheduleTaskService;
         }
 
-
         [HttpGet]
         [Route("getAll")]
         public async Task<List<List<ScheduledTask>>> GetAll()

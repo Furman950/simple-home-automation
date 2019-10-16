@@ -59,7 +59,7 @@ namespace SimpleHomeAutomation.Services
             await connectedToMqttServer.Invoke(options, "Failed to connect to MQTT Broker");
         }
 
-        public async void UnsubscribeFromServer()
+        public async Task UnsubscribeFromServer()
         {
             if (mqttClient.IsConnected)
             {
@@ -82,6 +82,7 @@ namespace SimpleHomeAutomation.Services
             }
 
             await mqttClient.PublishAsync(mqttMessage);
+            logger.Log("Published Message");
         }
     }
 }
