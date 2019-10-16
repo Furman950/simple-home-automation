@@ -36,6 +36,7 @@ namespace SimpleHomeAutomation.Controllers
         public async Task<IActionResult> Create([FromBody] ScheduledTask scheduleTask)
         {
             await scheduleTaskService.CreateScheduledTask(scheduleTask);
+            await scheduleTaskService.Persist();
             return Ok();
         }
 
@@ -44,6 +45,7 @@ namespace SimpleHomeAutomation.Controllers
         public async Task<IActionResult> Delete([FromBody] JobInfo jobInfo)
         {
             await scheduleTaskService.DeleteScheduledTask(jobInfo.Name, jobInfo.Group);
+            await scheduleTaskService.Persist();
             return Ok();
         }
 
@@ -52,6 +54,7 @@ namespace SimpleHomeAutomation.Controllers
         public async Task<IActionResult> Update([FromBody] ScheduledTask scheduledTask)
         {
             await scheduleTaskService.UpdateScheduledTask(scheduledTask);
+            await scheduleTaskService.Persist();
             return Ok();
         }
     }

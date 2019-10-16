@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using Quartz.Impl.Matchers;
 using SimpleHomeAutomation.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace SimpleHomeAutomation.Services
 {
@@ -16,7 +19,8 @@ namespace SimpleHomeAutomation.Services
     {
         #region Setup
         private readonly IServiceProvider serviceProvider;
-        private readonly ILogger fileLogger;
+        private readonly ILogger logger;
+        private readonly string path;
         private IScheduler scheduler;
 
         private const string MESSAGE = "message";
@@ -24,10 +28,11 @@ namespace SimpleHomeAutomation.Services
 
 
 
-        public ScheduledTaskService(IServiceProvider serviceProvider, ILogger fileLogger)
+        public ScheduledTaskService(IServiceProvider serviceProvider, ILogger logger, IWebHostEnvironment webHostEnvironment)
         {
             this.serviceProvider = serviceProvider;
-            this.fileLogger = fileLogger;
+            this.logger = logger;
+            path = webHostEnvironment.ContentRootPath + "\\config";
         }
         public void StartScheduler()
         {
@@ -56,7 +61,7 @@ namespace SimpleHomeAutomation.Services
 
         public async Task CreateScheduledTask(ScheduledTask scheduleTask)
         {
-            fileLogger.Log($"Creating Scheduled Task -> {scheduleTask.Name}");
+            logger.Log($"Creating Scheduled Task -> {scheduleTask.Name}");
             IJobDetail job = JobBuilder.Create<ScheduledTaskJob>()
                 .WithIdentity(scheduleTask.Name, scheduleTask.Group)
                 .UsingJobData(MESSAGE, scheduleTask.mqttMessage.Message)
@@ -164,6 +169,15 @@ namespace SimpleHomeAutomation.Services
         {
             await DeleteScheduledTask(scheduleTask.Name, scheduleTask.Group);
             await CreateScheduledTask(scheduleTask);
+        }
+        public async Task Persist()
+        {
+            logger.Log("Persisting Scheduled Tasks");
+            List<List<ScheduledTask>> scheduledTasks = await GetAllScheduledTasks();
+            string json = JsonConvert.SerializeObject(scheduledTasks);
+
+            using StreamWriter writer = File.CreateText($"{path}\\scheduledTasks.json");
+            await writer.WriteAsync(json);
         }
     }
 }

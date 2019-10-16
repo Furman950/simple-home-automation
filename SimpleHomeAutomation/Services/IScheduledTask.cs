@@ -11,5 +11,6 @@ namespace SimpleHomeAutomation.Services
         Task CreateScheduledTask(ScheduledTask scheduleTask);
         Task DeleteScheduledTask(string name, string group);
         Task UpdateScheduledTask(ScheduledTask scheduleTask);
+        Task Persist();
     }
 }
