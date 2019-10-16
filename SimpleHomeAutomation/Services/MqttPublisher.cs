@@ -76,7 +76,7 @@ namespace SimpleHomeAutomation.Services
 
             if (!mqttClient.IsConnected)
             {
-                String errorMsg = "Cannot connect to MQTT broker(server). Usually means that the MQTT broker(server) is not running or IP address of the broker is incorrect";
+                string errorMsg = "Cannot connect to MQTT broker(server). Usually means that the MQTT broker(server) is not running or IP address of the broker is incorrect";
                 logger.Log(errorMsg);
                 throw new HttpStatusCodeException(StatusCodes.Status500InternalServerError, errorMsg);
             }
