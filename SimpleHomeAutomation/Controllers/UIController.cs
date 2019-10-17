@@ -1,6 +1,8 @@
-﻿using System.IO;
-using Microsoft.AspNetCore.Hosting;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using SimpleHomeAutomation.Models;
+using SimpleHomeAutomation.Services;
 
 namespace SimpleHomeAutomation.Controllers
 {
@@ -8,34 +10,25 @@ namespace SimpleHomeAutomation.Controllers
     [ApiController]
     public class UIController : ControllerBase
     {
-        private readonly string jsonType = "application/json";
-        private readonly string configPath;
+        private readonly IUiService uiService;
         
-        public UIController(IWebHostEnvironment webHostEnvironment)
+        public UIController(IUiService uiService)
         {
-            configPath = webHostEnvironment.ContentRootPath + "\\config";
+            this.uiService = uiService;
         }
+
         [HttpGet]
         [Route("get")]
-        public IActionResult Get()
+        public async Task<List<UIControl>> Get()
         {
-            using (StreamReader file = new StreamReader(configPath + @"\ui.json"))
-            {
-                return Content(file.ReadToEnd(), jsonType);
-            }
+            return await uiService.Get();
         }
 
         [HttpPost]
         [Route("save")]
-        public IActionResult Save()
+        public async Task<IActionResult> Save([FromBody] List<UIControl> uiControls)
         {
-            string testJson = "{ \"data\": \"this is the data!!!!!!!\"}";
-
-            using (StreamWriter file = new StreamWriter(configPath + @"\ui.json"))
-            {
-                file.WriteLine(testJson);
-            }
-
+            await uiService.Save(uiControls);
             return Ok();
         }
     }

@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SimpleHomeAutomation.QuartJobs;
 using SimpleHomeAutomation.Services;
-using System.Diagnostics;
 
 namespace SimpleHomeAutomation
 {
@@ -38,6 +37,7 @@ namespace SimpleHomeAutomation
             services.AddSingleton<IMqttPublisher, MqttPublisher>();
             
             services.AddSingleton<ILogger, FileLogger>();
+            services.AddSingleton<IUiService, UIService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime appLifetime)

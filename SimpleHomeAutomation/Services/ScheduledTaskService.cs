@@ -58,7 +58,7 @@ namespace SimpleHomeAutomation.Services
             string json;
 
             using StreamReader reader = File.OpenText(this.filePath);
-            json = reader.ReadToEnd();
+            json = await reader.ReadToEndAsync();
             if (string.IsNullOrWhiteSpace(json))
             {
                 logger.Log("No Scheduled Tasks found");
