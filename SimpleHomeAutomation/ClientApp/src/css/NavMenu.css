@@ -1,0 +1,58 @@
+﻿.burger-button {
+  position: fixed;
+  width: 30px;
+  height: 30px;
+  left: 36px;
+  top: 20px;
+  cursor: pointer;
+}
+
+.burger-bar {
+  position: absolute;
+  height: 15%;
+  left: 0px;
+  right: 0px;
+  background-color:#373a47;
+}
+
+@media (max-width: 400px){
+  .burger-button {
+    left: 15px;
+    top: 15px;
+  }
+
+  #nav {
+    left: -25%
+  }
+}
+
+.nav-link > i {
+  vertical-align: middle !important;
+  margin-right: 7px;
+}
+
+#nav {
+  background-color: #373a47;
+  position: fixed;
+  height: 100%;
+  width: 20%;
+  left: -20%;
+}
+
+.openNav {
+  animation: openNav .3s forwards;
+}
+
+.closeNav  {
+  animation: closeNav .3s forwards;
+}
+
+@keyframes openNav {
+  0% { left: -20% }
+  100% { left: 0}
+}
+
+@keyframes closeNav {
+  0% { left: 0}
+  100% { left: -20% }
+}
