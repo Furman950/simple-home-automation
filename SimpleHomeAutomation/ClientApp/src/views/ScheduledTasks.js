@@ -18,7 +18,7 @@ export default class ScheduledTasks extends Component {
     render() {
         return (
             <Container>
-                <p>Scheduled Tasks Page</p>
+                <h4 class="text-center">Scheduled Tasks Page</h4>
                 <Fab onClick={this.handleShow}/>
                 <ScheduledTaskForm show={this.state.show} handleClose={this.handleClose} />
             </Container>

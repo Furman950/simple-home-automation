@@ -20,9 +20,13 @@
     left: 15px;
     top: 15px;
   }
+
+  #nav {
+    left: -25%
+  }
 }
 
-i {
+.nav-link > i {
   vertical-align: middle !important;
   margin-right: 7px;
 }
@@ -33,7 +37,6 @@ i {
   height: 100%;
   width: 20%;
   left: -20%;
-  
 }
 
 .openNav {
@@ -53,33 +56,3 @@ i {
   0% { left: 0}
   100% { left: -20% }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-/* a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
-}
-
-html {
-  font-size: 14px;
-}
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-} */

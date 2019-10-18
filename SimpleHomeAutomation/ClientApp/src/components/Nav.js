@@ -18,13 +18,13 @@ export class Nav extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      closeNav: ''
+    }
   }
 
-  handleClick = ev => {
-    console.log("Nav Clicked");
-    ev.preventDefault()
-    ev.stopPropagation();
-    ev.nativeEvent.stopImmediatePropagation();
+  componentDidMount() {
+    this.state.closeNav = 'closeNav'
   }
 
   render() {
@@ -35,8 +35,7 @@ export class Nav extends Component {
 
         <nav
           id="nav"
-          className={this.props.collapsed ? 'closeNav' : 'openNav'}
-          onClick={proxy => proxy.stopPropagation()}
+          className={this.props.collapsed ? this.state.closeNav : 'openNav'}
         >
           <h4 class="text-center">Simple Home Automation</h4>
           <NavItem onClick={this.props.toggleNavbar}>

@@ -22,6 +22,12 @@ export class Layout extends Component {
         this.toggleNavbar();
       }
     })
+
+    document.addEventListener("keydown", (e) => {
+      if (e.keyCode === 27 && !this.state.collapsed){
+        this.toggleNavbar();
+      }
+    }, false)
   }
 
   toggleNavbar = () => this.setState(prevState => ({ collapsed: !prevState.collapsed }))

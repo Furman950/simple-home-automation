@@ -5,7 +5,7 @@ export default class Settings extends Component {
     render() {
         return (
             <Container>
-                <p>Settings Page</p>
+                <h4 class="text-center">Settings Page</h4>
             </Container>
         )
     }
