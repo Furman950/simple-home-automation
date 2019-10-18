@@ -20,3 +20,25 @@
     position: relative;
     text-decoration: none;
   }
+
+  .flex-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .flex-item {
+    width: 30%;
+    margin: 5px;
+    height: 250px;
+    background-color: blue;
+  }
+
+  @media (max-width: 400px){
+    .fab-container {
+      bottom: 3vh;
+      position: fixed;
+      margin: 1em;
+      right: 3vw;
+    }
+  }

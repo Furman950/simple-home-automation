@@ -1,7 +1,7 @@
 import React from 'react';
 import '../css/AddNewControl.css';
 
-const Fab = props => {
+export default function Fab(props) {
     return (
         <div className="fab-container">
             <button onClick={props.onClick}
@@ -13,5 +13,3 @@ const Fab = props => {
         </div>
     )
 }
-
-export { Fab }
