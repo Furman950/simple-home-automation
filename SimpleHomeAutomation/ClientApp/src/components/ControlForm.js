@@ -1,9 +1,31 @@
 import React, { Component } from 'react';
-import { Modal, Button, Col, Container } from 'react-bootstrap';
+import { Modal, Button, Col } from 'react-bootstrap';
+import Controls from './controls/controls';
 
 export default class AddNewControlForm extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            selectedControl: undefined
+        }
+    }
+
+    updateSelectedControl = (componentName) => {
+        console.log(componentName);
+        this.setState({
+            selectedControl: componentName
+        })
+    }
+
+    addControl = () => {
+        if (this.state.selectedControl === undefined) {
+            alert("You need to choose control");
+            return;
+        }
+
+        this.props.addControl(this.state.selectedControl)
+        this.props.handleClose();
+        this.setState({ selectedControl: undefined })
     }
 
     render() {
@@ -22,42 +44,10 @@ export default class AddNewControlForm extends Component {
                     </Col>
                 </Modal.Header>
                 <Modal.Body>
-                    <div class="flex-container">
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                        <div class="flex-item"></div>
-                    </div>
+                    <Controls updateSelectedControl={this.updateSelectedControl} />
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onclick={this.props.addNewControl}>Add</Button>
+                    <Button variant="primary" onClick={this.addControl}>Add</Button>
                     <Button variant="secondary" onClick={this.props.handleClose}>Cancel</Button>
                 </Modal.Footer>
             </Modal>

@@ -7,21 +7,33 @@ export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ui: {},
+      ui: [],
       show: false
     }
   }
-  
-  //http://negomi.github.io/react-burger-menu/
 
   handleShow = () => this.setState({ show: true })
   handleClose = () => this.setState({ show: false })
 
+  addControl = (component) => {
+    this.setState({ ui: [...this.state.ui, component] })
+  }
+
   render() {
+    let controls = [];
+    this.state.ui.forEach(componentName => {
+      const Control = componentName;
+      controls.push(<Control theClasses={"flex-item"}/>)
+    })
+
     return (
       <div>
-        <h4 class="text-center">Home</h4>
-        <ControlForm show={this.state.show} handleClose={this.handleClose}/>
+        <h4 className="text-center">Home</h4>
+        <div className="flex-container">
+          {controls}
+        </div>
+
+        <ControlForm show={this.state.show} handleClose={this.handleClose} addControl={this.addControl} />
         <Fab onClick={this.handleShow} />
       </div>
     );

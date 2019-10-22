@@ -31,7 +31,6 @@
     width: 30%;
     margin: 5px;
     height: 250px;
-    background-color: blue;
   }
 
   @media (max-width: 400px){
@@ -42,3 +41,14 @@
       right: 3vw;
     }
   }
+
+.modal-control:hover{
+    cursor: pointer;
+    opacity: .7;
+    background-color: rgba(65, 112, 201, 0.836);
+}
+
+.selected {
+    opacity: .7;
+    background-color: rgba(65, 112, 201, 0.836);
+}
