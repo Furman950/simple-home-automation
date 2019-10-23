@@ -11,7 +11,6 @@ export default class AddNewControlForm extends Component {
     }
 
     updateSelectedControl = (componentName) => {
-        console.log(componentName);
         this.setState({
             selectedControl: componentName
         })

@@ -23,17 +23,17 @@ export default class Controls extends Component {
                 <div className={`flex-item modal-control ${this.state.selected === 1 ? 'selected' : ''}`}
                     onClick={() => this.select(1, OnOff)}
                 >
-                    <OnOff />
+                    <OnOff disabled={true}/>
                 </div>
                 <div className={`flex-item modal-control ${this.state.selected === 2 ? 'selected' : ''}`}
                     onClick={() => this.select(2, Switch)}
                 >
-                    <Switch />
+                    <Switch disabled={true} />
                 </div>
                 <div className={`flex-item modal-control ${this.state.selected === 3 ? 'selected' : ''}`}
                     onClick={() => this.select(3, Toggle)}
                 >
-                    <Toggle />
+                    <Toggle disabled={true} />
                 </div>
             </div>
         )
