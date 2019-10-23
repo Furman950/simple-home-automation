@@ -22,7 +22,6 @@ export default class OnOff extends Component {
     }
 
     render() {
-        console.log(this.props.disabled)
         return (
             <div className={this.props.theClasses}>
                 <p className="text-center">{this.props.label}</p>
