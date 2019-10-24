@@ -31,7 +31,6 @@ export default class OnOff extends Component {
     isEmpty = (obj) => Object.entries(obj).length === 0 && obj.constructor === Object
 
     publishOn = () => {
-        console.log(this.state)
         publishMessage(this.state.topic, this.state.onPublishMessage)
             .then(res => console.log(res));
     }

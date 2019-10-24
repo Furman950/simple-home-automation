@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Form } from 'react-bootstrap';
 import OnOffConfig from './controls/config/OnOffConfig';
-import Switch from './controls/Switch';
-import Toggle from './controls/Toggle';
+import SwitchConfig from './controls/config/SwitchConfig';
+import ToggleConfig from './controls/config/ToggleConfig';
 
 export default class ControlConfiguration extends Component {
     constructor(props) {
@@ -11,8 +11,8 @@ export default class ControlConfiguration extends Component {
     
     configComponents = {
         "OnOff": OnOffConfig,
-        "Switch": Switch,
-        "Toggle": Toggle
+        "Switch": SwitchConfig,
+        "Toggle": ToggleConfig
     }
 
     onChange = e => {
