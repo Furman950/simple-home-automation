@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Fab from '../components/Fab';
 import ControlForm from '../components/ControlForm';
-import { saveUI } from '../services/APICalls';
+import { saveUI, getUI } from '../services/APICalls';
+import UIBuilder from '../util/UIBuilder';
 
 export default class Home extends Component {
   static displayName = Home.name;
@@ -12,6 +13,15 @@ export default class Home extends Component {
       show: false,
       showConfig: false
     }
+  }
+
+  componentDidMount() {
+    getUI()
+      .then(res => res.json())
+      .then(json => {
+        let ui = UIBuilder(json);
+        this.setState({ ui: ui })
+      });
   }
 
   handleShow = () => this.setState({ show: true })
