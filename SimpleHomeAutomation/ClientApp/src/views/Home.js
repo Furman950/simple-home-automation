@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Fab from '../components/Fab';
 import ControlForm from '../components/ControlForm';
+import { saveUI } from '../services/APICalls';
 
 export default class Home extends Component {
   static displayName = Home.name;
@@ -18,8 +19,10 @@ export default class Home extends Component {
   hideConfig = () => this.setState({ showConfig: false })
   showConfig = () => this.setState({ showConfig: true })
 
-  addControl = (component) => {
-    this.setState({ ui: [...this.state.ui, component] })
+  addControl = (control) => {
+    let ui = [...this.state.ui, control]
+    this.setState({ ui: ui })
+    saveUI(ui);
   }
 
   render() {

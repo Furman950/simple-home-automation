@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,12 +8,11 @@ namespace SimpleHomeAutomation.Models
     public class UIControl
     {
         [Required]
-        public string Type { get; set; }
+        [JsonProperty(PropertyName = "component")]
+        public string Component { get; set; }
 
         [Required]
-        public MQTTMessage MqttMessage { get; set; }
-
-        [Required]
-        public Dictionary<string, string> Attributes { get; set; }
+        [JsonProperty(PropertyName = "data")]
+        public Dictionary<string, string> Data { get; set; }
     }
 }
