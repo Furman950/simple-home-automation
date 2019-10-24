@@ -8,12 +8,15 @@ export default class Home extends Component {
     super(props);
     this.state = {
       ui: [],
-      show: false
+      show: false,
+      showConfig: false
     }
   }
 
   handleShow = () => this.setState({ show: true })
-  handleClose = () => this.setState({ show: false })
+  handleClose = () => this.setState({ show: false, showConfig: false })
+  hideConfig = () => this.setState({ showConfig: false })
+  showConfig = () => this.setState({ showConfig: true })
 
   addControl = (component) => {
     this.setState({ ui: [...this.state.ui, component] })
@@ -21,9 +24,9 @@ export default class Home extends Component {
 
   render() {
     let controls = [];
-    this.state.ui.forEach(componentName => {
-      const Control = componentName;
-      controls.push(<Control theClasses={"flex-item"}/>)
+    this.state.ui.forEach((control, i) => {
+      const Control = control.component;
+      controls.push(<Control key={i} data={control.data} theClasses={"flex-item"} />)
     })
 
     return (
@@ -33,7 +36,14 @@ export default class Home extends Component {
           {controls}
         </div>
 
-        <ControlForm show={this.state.show} handleClose={this.handleClose} addControl={this.addControl} />
+        <ControlForm
+          show={this.state.show}
+          showConfig={this.state.showConfig}
+          unhideConfig={this.showConfig}
+          hideConfig={this.hideConfig}
+          handleClose={this.handleClose}
+          addControl={this.addControl}
+        />
         <Fab onClick={this.handleShow} />
       </div>
     );

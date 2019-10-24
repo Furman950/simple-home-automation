@@ -6,13 +6,20 @@ import Toggle from './controls/Toggle';
 
 export default class ControlConfiguration extends Component {
     constructor(props) {
-        super(props);
+        super(props)
     }
-
+    
     configComponents = {
         "OnOff": OnOffConfig,
         "Switch": Switch,
         "Toggle": Toggle
+    }
+
+    onChange = e => {
+        let key = e.target.name;
+        let value = e.target.value;
+
+        this.props.controlData(key, value);
     }
 
     render() {
@@ -20,16 +27,16 @@ export default class ControlConfiguration extends Component {
         return (
             <Form>
                 <Form.Group>
-                    <Form.Label>Publish Topic</Form.Label>
-                    <p><small>Exmaple 'house/bedroom/light'</small></p>
+                    <Form.Label>Publish Topic*</Form.Label>
                     <Form.Control
                         type="text"
                         pattern="^[A-Za-z][A-Za-z\/-]*"
-                        placeholder="Leave blank for default"
+                        placeholder="Exmaple 'house/bedroom/light'"
+                        onChange={e => this.props.controlData(e.target.name, e.target.value)}
+                        name="topic"
                     />
-                    <Config />
-
                 </Form.Group>
+                <Config controlData={this.props.controlData}/>
             </Form>
         )
     }
