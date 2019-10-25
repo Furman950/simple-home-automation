@@ -9,25 +9,24 @@ export default class Controls extends Component {
         super(props);
     }
 
-    select = (componentName) => {
-        this.props.updateSelectedControl(componentName);
-    }
+    select = (componentName) =>
+        this.props.addControlData("componentName", componentName);
 
     render() {
         return (
             <div className="flex-container">
                 <div className={`flex-item modal-control`}
-                    onClick={() => this.select(OnOff)}
+                    onClick={() => this.select("OnOff")}
                 >
-                    <OnOff disabled={true}/>
+                    <OnOff disabled={true} />
                 </div>
                 <div className={`flex-item modal-control`}
-                    onClick={() => this.select(Switch)}
+                    onClick={() => this.select("Switch")}
                 >
                     <Switch disabled={true} />
                 </div>
                 <div className={`flex-item modal-control`}
-                    onClick={() => this.select(Toggle)}
+                    onClick={() => this.select("Toggle")}
                 >
                     <Toggle disabled={true} />
                 </div>

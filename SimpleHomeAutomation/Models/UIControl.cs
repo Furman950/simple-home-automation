@@ -8,11 +8,7 @@ namespace SimpleHomeAutomation.Models
     public class UIControl
     {
         [Required]
-        [JsonProperty(PropertyName = "component")]
-        public string Component { get; set; }
-
-        [Required]
-        [JsonProperty(PropertyName = "data")]
-        public Dictionary<string, string> Data { get; set; }
+        [JsonProperty(PropertyName="control")]
+        public Dictionary<string, string> Control { get; set; }
     }
 }

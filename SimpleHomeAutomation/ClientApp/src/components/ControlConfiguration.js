@@ -1,29 +1,21 @@
 import React, { Component } from 'react';
 import { Form } from 'react-bootstrap';
-import OnOffConfig from './controls/config/OnOffConfig';
-import SwitchConfig from './controls/config/SwitchConfig';
-import ToggleConfig from './controls/config/ToggleConfig';
+import { getUIConfig } from '../util/UIBuilder';
 
 export default class ControlConfiguration extends Component {
     constructor(props) {
         super(props)
-    }
-    
-    configComponents = {
-        "OnOff": OnOffConfig,
-        "Switch": SwitchConfig,
-        "Toggle": ToggleConfig
     }
 
     onChange = e => {
         let key = e.target.name;
         let value = e.target.value;
 
-        this.props.controlData(key, value);
+        this.props.addControlData(key, value);
     }
 
     render() {
-        const Config = this.configComponents[this.props.componentName]
+        const Config = getUIConfig(this.props.componentName)
         return (
             <Form>
                 <Form.Group>
@@ -32,11 +24,11 @@ export default class ControlConfiguration extends Component {
                         type="text"
                         pattern="^[A-Za-z][A-Za-z\/-]*"
                         placeholder="Exmaple 'house/bedroom/light'"
-                        onChange={e => this.props.controlData(e.target.name, e.target.value)}
+                        onChange={this.onChange}
                         name="topic"
                     />
                 </Form.Group>
-                <Config controlData={this.props.controlData}/>
+                <Config addControlData={this.props.addControlData}/>
             </Form>
         )
     }

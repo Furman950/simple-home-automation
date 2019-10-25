@@ -2,45 +2,37 @@ import React, { Component } from 'react';
 import { Modal, Button, Col, } from 'react-bootstrap';
 import Controls from './controls/controls';
 import ControlConfiguration from './ControlConfiguration';
+import { getUIControl } from '../util/UIBuilder';
 
 export default class ControlForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            control: {
-                data: {},
-                component: undefined,
-            },
+            control: {},
         }
-    }
-
-    updateSelectedControl = (control) => {
-        let temp = { ...this.state.control }
-        temp.component = control
-        this.setState({ control: temp })
-        this.props.unhideConfig();
     }
 
     addControl = () => {
-        if (this.state.control.data.topic === undefined) {
+        if (this.state.control.topic === undefined) {
             alert("Publish topic is required, it cannot start with a '/'\n\nExample:\n\nhouse/bedroom/light")
             return;
         }
-        this.props.addControl(this.state.control)
+
+        this.props.addControl({ control: this.state.control })
         this.props.handleClose();
         this.setState({
-            control: {
-                data: {},
-                component: undefined,
-            },
-            selectedControlData: undefined,
+            control: {}
         })
     }
 
-    controlData = (key, value) => {
-        let temp = { ...this.state.control }
-        temp.data[key] = value;
-        this.setState({ control: temp })
+    addControlData = (key, value) => {
+        let control = { ...this.state.control }
+        control[key] = value;
+        this.setState({ control: control })
+
+        if (key === "componentName") {
+            this.props.unhideConfig();
+        }
     }
 
     render() {
@@ -66,8 +58,8 @@ export default class ControlForm extends Component {
                 </Modal.Header>
                 <Modal.Body>
                     {this.props.showConfig ?
-                        <ControlConfiguration controlData={this.controlData} componentName={this.state.control.component.prototype.constructor.name} /> :
-                        <Controls updateSelectedControl={this.updateSelectedControl} />}
+                        <ControlConfiguration addControlData={this.addControlData} componentName={this.state.control.componentName} /> :
+                        <Controls addControlData={this.addControlData} />}
 
                 </Modal.Body>
                 <Modal.Footer>

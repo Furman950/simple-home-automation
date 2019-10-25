@@ -27,17 +27,8 @@ function publishMessage(topic, message) {
         JSON.stringify({ topic, message }));
 }
 
-function saveUI(ui) {
-    let json = JSON.stringify(ui, (key, value) => {
-        if (typeof value === 'function') {
-            return value.prototype.constructor.name
-        }
-        else {
-            return value;
-        }
-    })
-
-    return postRequest("/ui/save", json);
+function saveUI(uiJSON) {
+    return postRequest("/ui/save", JSON.stringify(uiJSON));
 }
 
 function getUI() {

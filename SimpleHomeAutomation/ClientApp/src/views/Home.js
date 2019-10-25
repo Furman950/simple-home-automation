@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import Fab from '../components/Fab';
 import ControlForm from '../components/ControlForm';
 import { saveUI, getUI } from '../services/APICalls';
-import UIBuilder from '../util/UIBuilder';
+import { UIBuilder, getUIControl } from '../util/UIBuilder';
 
 export default class Home extends Component {
   static displayName = Home.name;
   constructor(props) {
     super(props);
     this.state = {
-      ui: [],
+      uiJSON: [],
       show: false,
       showConfig: false
     }
@@ -19,9 +19,9 @@ export default class Home extends Component {
     getUI()
       .then(res => res.json())
       .then(json => {
-        let ui = UIBuilder(json);
-        this.setState({ ui: ui })
-      });
+        this.setState({ uiJSON: json })
+      })
+      .catch(err => console.log(err));
   }
 
   handleShow = () => this.setState({ show: true })
@@ -30,17 +30,13 @@ export default class Home extends Component {
   showConfig = () => this.setState({ showConfig: true })
 
   addControl = (control) => {
-    let ui = [...this.state.ui, control]
-    this.setState({ ui: ui })
-    saveUI(ui);
+    let uiJSON = [...this.state.uiJSON, control]
+    this.setState({ uiJSON: uiJSON })
+    saveUI(uiJSON);
   }
 
   render() {
-    let controls = [];
-    this.state.ui.forEach((control, i) => {
-      const Control = control.component;
-      controls.push(<Control key={i} data={control.data} theClasses={"flex-item"} />)
-    })
+    let controls = UIBuilder(this.state.uiJSON)
 
     return (
       <div>

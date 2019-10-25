@@ -10,7 +10,7 @@ export default class OnOffConfig extends Component {
         let key = e.target.name;
         let value = e.target.value;
 
-        this.props.controlData(key, value);
+        this.props.addControlData(key, value);
     }
 
     render() {
