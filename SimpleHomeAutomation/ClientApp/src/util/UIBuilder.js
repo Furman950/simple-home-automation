@@ -4,6 +4,7 @@ import Switch from '../components/controls/Switch';
 import OnOffConfig from '../components/controls/config/OnOffConfig';
 import SwitchConfig from '../components/controls/config/SwitchConfig';
 import ToggleConfig from '../components/controls/config/ToggleConfig';
+import Toggle from '../components/controls/Toggle';
 
 
 function getUIControl(controlName) {
@@ -12,6 +13,8 @@ function getUIControl(controlName) {
             return OnOff;
         case "Switch":
             return Switch;
+        case "Toggle":
+            return Toggle;
     }
 }
 
