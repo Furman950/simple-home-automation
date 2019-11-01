@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Fab from '../components/Fab';
 import ControlForm from '../components/ControlForm';
 import { saveUI, getUI } from '../services/APICalls';
-import { UIBuilder, getUIControl } from '../util/UIBuilder';
+import { UIBuilder } from '../util/UIBuilder';
 
 export default class Home extends Component {
   static displayName = Home.name;
@@ -31,8 +31,8 @@ export default class Home extends Component {
 
   addControl = (control) => {
     let uiJSON = [...this.state.uiJSON, control]
-    this.setState({ uiJSON: uiJSON })
-    saveUI(uiJSON);
+    this.setState({ uiJSON: uiJSON });
+    saveUI(control);
   }
 
   render() {

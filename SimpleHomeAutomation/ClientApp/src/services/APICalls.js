@@ -28,6 +28,8 @@ function publishMessage(topic, message) {
 }
 
 function saveUI(uiJSON) {
+    console.log("Saving UI");
+    console.log(JSON.stringify(uiJSON));
     return postRequest("/ui/save", JSON.stringify(uiJSON));
 }
 

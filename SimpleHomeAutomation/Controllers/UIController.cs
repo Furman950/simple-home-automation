@@ -26,9 +26,9 @@ namespace SimpleHomeAutomation.Controllers
 
         [HttpPost]
         [Route("save")]
-        public async Task<IActionResult> Save([FromBody] List<UIControl> uiControls)
+        public async Task<IActionResult> Save([FromBody] UIControl uiControl)
         {
-            await uiService.Save(uiControls);
+            await uiService.Save(uiControl);
             return Ok();
         }
     }

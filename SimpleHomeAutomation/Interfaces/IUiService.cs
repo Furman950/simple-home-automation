@@ -8,7 +8,7 @@ namespace SimpleHomeAutomation.Services
 {
     public interface IUiService
     {
-        Task Save(List<UIControl> uIControls);
+        Task Save(UIControl uiControls);
         Task<List<UIControl>> Get();
     }
 }

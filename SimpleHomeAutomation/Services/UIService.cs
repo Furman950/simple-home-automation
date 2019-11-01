@@ -22,35 +22,36 @@ namespace SimpleHomeAutomation.Services
 
         public async Task<List<UIControl>> Get()
         {
+            List<UIControl> uiControls = null;
             try
             {
                 using StreamReader reader = File.OpenText(this.filePath);
                 string json = await reader.ReadToEndAsync();
-                return JsonConvert.DeserializeObject<List<UIControl>>(json);
+                uiControls = JsonConvert.DeserializeObject<List<UIControl>>(json);
             }
             catch (Exception e)
             {
                 logger.Log(e.Message);
             }
 
-            return new List<UIControl>();
+            return uiControls ?? new List<UIControl>();
         }
 
-        public async Task Save(List<UIControl> uiControls)
+        public async Task Save(UIControl uiControl)
         {
-            CreateFileIfNotExist();
+            List<UIControl> currentUIControls = await Get();
+            currentUIControls.Add(uiControl);
             try
             {
                 using StreamWriter writer = File.CreateText(this.filePath);
-                string json = JsonConvert.SerializeObject(uiControls);
+                string json = JsonConvert.SerializeObject(currentUIControls);
                 await writer.WriteAsync(json);
-                logger.Log("Saved UI");
+                logger.Log($"Saved UI - Added {uiControl}");
             }
             catch (Exception e)
             {
                 logger.Log(e.Message);
             }
-
         }
 
         private void CreateFileIfNotExist()
