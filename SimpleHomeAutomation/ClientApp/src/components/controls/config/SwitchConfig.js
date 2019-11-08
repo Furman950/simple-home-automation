@@ -22,7 +22,7 @@ export default class SwitchConfig extends Component {
                 </Form.Group>
                 <Form.Row>
                     <Form.Group as={Col}>
-                        <Form.Label>On switch turn on publish message</Form.Label>
+                        <Form.Label>On publish message</Form.Label>
                         <Form.Control
                             type="text"
                             placeholder="Default is ON"
@@ -32,7 +32,7 @@ export default class SwitchConfig extends Component {
                     </Form.Group>
 
                     <Form.Group as={Col}>
-                        <Form.Label>On switch turn off publish message</Form.Label>
+                        <Form.Label>Off publish message</Form.Label>
                         <Form.Control
                             type="text"
                             placeholder="Default is 'OFF'"

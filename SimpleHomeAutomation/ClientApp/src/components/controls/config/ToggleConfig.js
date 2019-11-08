@@ -18,14 +18,14 @@ export default class ToggleConfig extends Component {
             <div>
                 <Form.Group>
                     <Form.Label>Label for Toggle Control</Form.Label>
-                    <Form.Control placeholder="Default 'toggle'" onChange={this.onChange} name="label" />
+                    <Form.Control placeholder="Default 'Toggle'" onChange={this.onChange} name="label" />
                 </Form.Group>
                 <Form.Row>
                     <Form.Group as={Col}>
                         <Form.Label>Toggle button publish message</Form.Label>
                         <Form.Control
                             type="text"
-                            placeholder="Default is 'toggle'"
+                            placeholder="Default is 'Toggle'"
                             onChange={this.onChange}
                             name="publishMessage"
                         />
