@@ -18,7 +18,7 @@ namespace SimpleHomeAutomation.Controllers
 
         [HttpGet]
         [Route("getAll")]
-        public async Task<List<List<ScheduledTask>>> GetAll()
+        public async Task<Dictionary<string, List<ScheduledTask>>> GetAll()
         {
             return await scheduleTaskService.GetAllScheduledTasks();
         }

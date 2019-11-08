@@ -6,7 +6,7 @@ namespace SimpleHomeAutomation.Services
 {
     public interface IScheduledTask
     {
-        Task<List<List<ScheduledTask>>> GetAllScheduledTasks();
+        Task<Dictionary<string, List<ScheduledTask>>> GetAllScheduledTasks();
         Task<ScheduledTask> GetScheduledTask(string name, string group);
         Task CreateScheduledTask(ScheduledTask scheduleTask);
         Task DeleteScheduledTask(string name, string group);

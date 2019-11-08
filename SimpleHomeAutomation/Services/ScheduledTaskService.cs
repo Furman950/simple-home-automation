@@ -65,11 +65,11 @@ namespace SimpleHomeAutomation.Services
                 return;
             }
 
-            List<List<ScheduledTask>> scheduledTasksList = JsonConvert.DeserializeObject<List<List<ScheduledTask>>>(json);
+            Dictionary<string, List<ScheduledTask>> scheduledTaskMap = JsonConvert.DeserializeObject<Dictionary<string, List<ScheduledTask>>>(json);
 
-            foreach (var list in scheduledTasksList)
+            foreach(var scheduledTaskList in scheduledTaskMap.Values)
             {
-                foreach (var scheduledTask in list)
+                foreach(var scheduledTask in scheduledTaskList)
                 {
                     await CreateScheduledTask(scheduledTask);
                 }
@@ -121,9 +121,10 @@ namespace SimpleHomeAutomation.Services
             await scheduler.DeleteJob(jobKey);
         }
 
-        public async Task<List<List<ScheduledTask>>> GetAllScheduledTasks()
+        public async Task<Dictionary<string, List<ScheduledTask>>> GetAllScheduledTasks()
         {
-            List<List<ScheduledTask>> listOfScheduledTasksList = new List<List<ScheduledTask>>();
+            Dictionary<string, List<ScheduledTask>> map = new Dictionary<string, List<ScheduledTask>>();
+            //List<List<ScheduledTask>> listOfScheduledTasksList = new List<List<ScheduledTask>>();
 
             IReadOnlyCollection<string> groups = await scheduler.GetJobGroupNames();
 
@@ -161,11 +162,11 @@ namespace SimpleHomeAutomation.Services
 
                     });
                 }
-
-                listOfScheduledTasksList.Add(list);
+                map.Add(group, list);
+                //listOfScheduledTasksList.Add(list);
             }
 
-            return listOfScheduledTasksList;
+            return map;
 
         }
 
@@ -204,7 +205,7 @@ namespace SimpleHomeAutomation.Services
         public async Task Persist()
         {
             logger.Log("Persisting Scheduled Tasks");
-            List<List<ScheduledTask>> scheduledTasks = await GetAllScheduledTasks();
+            Dictionary<string, List<ScheduledTask>> scheduledTasks = await GetAllScheduledTasks();
             string json = JsonConvert.SerializeObject(scheduledTasks);
 
             using StreamWriter writer = File.CreateText(this.filePath);
