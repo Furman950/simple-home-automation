@@ -40,7 +40,7 @@ export default class Home extends Component {
 
     return (
       <div>
-        <h4 className="text-center">Home</h4>
+        <h4 className="text-center text-color">Home</h4>
         <div className="flex-container">
           {controls}
         </div>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Container, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import '../css/NavMenu.css';
+import '../css/navMenu.scss';
 
 const Burger = (props) => {
   return (
@@ -36,7 +36,7 @@ export class Nav extends Component {
           id="nav"
           className={this.props.collapsed ? this.state.closeNav : 'openNav'}
         >
-          <h4 className="text-center">Simple Home Automation</h4>
+          <h4 className="text-center text-color">Simple Home Automation</h4>
           <NavItem onClick={this.props.toggleNavbar}>
             <NavLink tag={Link} className="" to="/">
               <i className="material-icons">home</i>

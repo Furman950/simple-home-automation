@@ -1,0 +1,56 @@
+@import url(https://fonts.googleapis.com/icon?family=Material+Icons);
+@import './master';
+
+.fab-container {
+    bottom: 10vh;
+    position: fixed;
+    margin: 1em;
+    right: 8vw;
+  }
+
+.fab-item {
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  border-radius: 50%;
+  border-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 56px;
+  height: 56px;
+  margin: 20px auto 0;
+  position: relative;
+  text-decoration: none;
+  background-color: $accent;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.flex-item {
+  width: 30%;
+  margin: 5px;
+  height: 250px;
+}
+
+@media (max-width: 400px){
+  .fab-container {
+    bottom: 3vh;
+    position: fixed;
+    margin: 1em;
+    right: 3vw;
+  }
+}
+
+.modal-control:hover{
+    cursor: pointer;
+    opacity: .7;
+    background-color: rgba(65, 112, 201, 0.836);
+}
+
+.selected {
+    opacity: .7;
+    background-color: rgba(65, 112, 201, 0.836);
+}

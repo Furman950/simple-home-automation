@@ -7,6 +7,7 @@
     "bootstrap": "^4.3.1",
     "jquery": "^3.4.1",
     "merge": "^1.2.1",
+    "node-sass": "^4.13.0",
     "oidc-client": "^1.9.0",
     "react": "^16.0.0",
     "react-bootstrap": "^1.0.0-beta.14",

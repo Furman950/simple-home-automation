@@ -28,8 +28,6 @@ function publishMessage(topic, message) {
 }
 
 function saveUI(uiJSON) {
-    console.log("Saving UI");
-    console.log(JSON.stringify(uiJSON));
     return postRequest("/ui/save", JSON.stringify(uiJSON));
 }
 
@@ -37,8 +35,19 @@ function getUI() {
     return getRequest("/ui/get")
 }
 
+function saveScheduledTask(scheduledTask) {
+    return postRequest("ScheduledTasks/create", JSON.stringify())
+}
+
+
+function getScheduledTasks() {
+    return getRequest("/ScheduledTasks/getAll")
+}
+
 export {
     publishMessage,
     saveUI,
-    getUI
+    getUI,
+    saveScheduledTask,
+    getScheduledTasks
 }

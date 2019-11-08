@@ -1,0 +1,12 @@
+@import './master';
+
+.group-container {
+    background-color: $background-color-light;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    color: white;
+}
+
+.scheduled-task-container {
+    background-color: $scheduledt-task-container-color;
+}

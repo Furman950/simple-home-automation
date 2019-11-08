@@ -5,6 +5,7 @@ import OnOffConfig from '../components/controls/config/OnOffConfig';
 import SwitchConfig from '../components/controls/config/SwitchConfig';
 import ToggleConfig from '../components/controls/config/ToggleConfig';
 import Toggle from '../components/controls/Toggle';
+import ScheduledTaskGroup from '../components/ScheduledTaskGroup';
 
 
 function getUIControl(controlName) {
@@ -28,6 +29,21 @@ function UIBuilder(uiObjects) {
     return controls;
 };
 
+function scheduledTaskBuilder(scheduledTaskObjects) {
+    console.log("UIBuilder::ScheduledTaskBuilder")
+    console.log(scheduledTaskObjects);
+
+    let schedueldTasks = [];
+
+    for (var key in scheduledTaskObjects) {
+        let scheduledTaskList = scheduledTaskObjects[key];
+        console.log(scheduledTaskList);
+        schedueldTasks.push(<ScheduledTaskGroup groupName={key} scheduledTasksList={scheduledTaskList} />)
+    }
+
+    return schedueldTasks;
+}
+
 function getUIConfig(controlName) {
     switch (controlName) {
         case "OnOff":
@@ -44,5 +60,6 @@ function getUIConfig(controlName) {
 export {
     getUIControl,
     UIBuilder,
-    getUIConfig
+    getUIConfig,
+    scheduledTaskBuilder
 }

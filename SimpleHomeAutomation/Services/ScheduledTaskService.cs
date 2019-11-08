@@ -124,7 +124,6 @@ namespace SimpleHomeAutomation.Services
         public async Task<Dictionary<string, List<ScheduledTask>>> GetAllScheduledTasks()
         {
             Dictionary<string, List<ScheduledTask>> map = new Dictionary<string, List<ScheduledTask>>();
-            //List<List<ScheduledTask>> listOfScheduledTasksList = new List<List<ScheduledTask>>();
 
             IReadOnlyCollection<string> groups = await scheduler.GetJobGroupNames();
 
@@ -163,7 +162,6 @@ namespace SimpleHomeAutomation.Services
                     });
                 }
                 map.Add(group, list);
-                //listOfScheduledTasksList.Add(list);
             }
 
             return map;
