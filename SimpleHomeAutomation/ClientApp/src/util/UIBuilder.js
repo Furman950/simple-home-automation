@@ -16,6 +16,8 @@ function getUIControl(controlName) {
             return Switch;
         case "Toggle":
             return Toggle;
+        default:
+            return OnOff;
     }
 }
 
@@ -30,18 +32,9 @@ function UIBuilder(uiObjects) {
 };
 
 function scheduledTaskBuilder(scheduledTaskObjects) {
-    console.log("UIBuilder::ScheduledTaskBuilder")
-    console.log(scheduledTaskObjects);
-
-    let schedueldTasks = [];
-
-    for (var key in scheduledTaskObjects) {
-        let scheduledTaskList = scheduledTaskObjects[key];
-        console.log(scheduledTaskList);
-        schedueldTasks.push(<ScheduledTaskGroup groupName={key} scheduledTasksList={scheduledTaskList} />)
-    }
-
-    return schedueldTasks;
+    return Object.keys(scheduledTaskObjects).map((key, index) =>
+        <ScheduledTaskGroup key={index} groupName={key} scheduledTasksList={scheduledTaskObjects[key]} />
+    );
 }
 
 function getUIConfig(controlName) {

@@ -9,8 +9,8 @@ export default class ScheduledTaskGroup extends Component {
 
     render() {
         let scheduledTasks = [];
-        this.props.scheduledTasksList.forEach(scheduledTask =>
-            scheduledTasks.push(<ScheduledTask scheduledTask={scheduledTask} />))
+        this.props.scheduledTasksList.forEach((scheduledTask, index) =>
+            scheduledTasks.push(<ScheduledTask key={index} scheduledTask={scheduledTask} />))
 
         return (
             <Container className="group-container">

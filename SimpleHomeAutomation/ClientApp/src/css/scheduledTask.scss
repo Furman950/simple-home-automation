@@ -10,3 +10,11 @@
 .scheduled-task-container {
     background-color: $scheduledt-task-container-color;
 }
+
+.unselected {
+    opacity: .5;
+}
+
+.intervalType:hover {
+    cursor: pointer;
+}
