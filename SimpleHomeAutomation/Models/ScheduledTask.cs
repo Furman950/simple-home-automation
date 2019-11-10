@@ -15,6 +15,9 @@ namespace SimpleHomeAutomation.Models
         public List<string> Crons { get; set; }
 
         [Required]
+        public int Status { get; set; }
+
+        [Required]
         public MQTTMessage mqttMessage { get; set; }
     }
 }

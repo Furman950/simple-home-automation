@@ -67,9 +67,9 @@ namespace SimpleHomeAutomation.Services
 
             Dictionary<string, List<ScheduledTask>> scheduledTaskMap = JsonConvert.DeserializeObject<Dictionary<string, List<ScheduledTask>>>(json);
 
-            foreach(var scheduledTaskList in scheduledTaskMap.Values)
+            foreach (var scheduledTaskList in scheduledTaskMap.Values)
             {
-                foreach(var scheduledTask in scheduledTaskList)
+                foreach (var scheduledTask in scheduledTaskList)
                 {
                     await CreateScheduledTask(scheduledTask);
                 }
@@ -91,7 +91,7 @@ namespace SimpleHomeAutomation.Services
         {
             if (await JobExists(scheduleTask.Name, scheduleTask.Group))
                 throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Scheduled Task with Name: '{scheduleTask.Name}' and Group: '{scheduleTask.Group}' already exist!");
-                
+
             logger.Log($"Creating Scheduled Task -> {scheduleTask.Name}");
             IJobDetail job = JobBuilder.Create<ScheduledTaskJob>()
                 .WithIdentity(scheduleTask.Name, scheduleTask.Group)
@@ -104,11 +104,13 @@ namespace SimpleHomeAutomation.Services
                 ITrigger trigger = TriggerBuilder.Create()
                    .WithIdentity(Guid.NewGuid().ToString(), scheduleTask.Group)
                    .StartNow()
-                   .WithCronSchedule(cron)
+                   .WithCronSchedule(cron, x => x.WithMisfireHandlingInstructionDoNothing())
                    .Build();
-
                 logger.Log($"Scheduling job -> With Name: '{scheduleTask.Name}', Group: '{scheduleTask.Group}");
                 await scheduler.ScheduleJob(job, trigger);
+
+                if (scheduleTask.Status == 0)
+                    await PauseScheduledTask(scheduleTask.Name, scheduleTask.Group);
             }
         }
 
@@ -127,7 +129,6 @@ namespace SimpleHomeAutomation.Services
 
             IReadOnlyCollection<string> groups = await scheduler.GetJobGroupNames();
 
-
             foreach (string group in groups)
             {
                 var groupMatcher = GroupMatcher<JobKey>.GroupContains(group);
@@ -141,11 +142,17 @@ namespace SimpleHomeAutomation.Services
                     var triggers = await scheduler.GetTriggersOfJob(jobKey);
 
                     var cronsList = new List<string>();
+                    int status = 0;
 
-                    foreach (ICronTrigger trigger in triggers)
+                    foreach (var trigger in triggers)
                     {
+                        ITrigger triggerKey = trigger as ITrigger;
+                        var triggerState = await scheduler.GetTriggerState(triggerKey.Key);
+                        status = triggerState == TriggerState.Paused ? 0 : 1;
 
-                        cronsList.Add(trigger.CronExpressionString);
+
+                        ICronTrigger cronTrigger = trigger as ICronTrigger;
+                        cronsList.Add(cronTrigger.CronExpressionString);
                     }
 
                     list.Add(new ScheduledTask
@@ -153,6 +160,7 @@ namespace SimpleHomeAutomation.Services
                         Name = jobKey.Name,
                         Group = group,
                         Crons = cronsList,
+                        Status = status,
                         mqttMessage = new MQTTMessage
                         {
                             Message = jobDetail.JobDataMap.GetString(MESSAGE),
@@ -199,6 +207,37 @@ namespace SimpleHomeAutomation.Services
         {
             await DeleteScheduledTask(scheduleTask.Name, scheduleTask.Group);
             await CreateScheduledTask(scheduleTask);
+        }
+
+        public async Task ResumeScheduledTask(string name, string group)
+        {
+            bool jobExists = await JobExists(name, group);
+            if (!jobExists)
+                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Scheduled Task with Name: '{name}' and Group: '{group}' does not exist!");
+
+
+            JobKey jobKey = new JobKey(name, group);
+            var triggers = await scheduler.GetTriggersOfJob(jobKey);
+            
+            foreach(var trigger in triggers)
+            {
+                await scheduler.ResumeTrigger(trigger.Key);
+            }
+        }
+
+        public async Task PauseScheduledTask(string name, string group)
+        {
+            bool jobExists = await JobExists(name, group);
+            if (!jobExists)
+                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Scheduled Task with Name: '{name}' and Group: '{group}' does not exist!");
+
+            JobKey jobKey = new JobKey(name, group);
+
+            var triggers = await scheduler.GetTriggersOfJob(jobKey);
+            foreach (var trigger in triggers)
+            {
+                await scheduler.PauseTrigger(trigger.Key);
+            }
         }
         public async Task Persist()
         {

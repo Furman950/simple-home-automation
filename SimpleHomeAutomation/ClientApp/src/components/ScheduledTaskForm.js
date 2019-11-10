@@ -54,6 +54,7 @@ export default class ScheduledTaskForm extends Component {
         if (response.ok) {
             this.handleClose();
             let body = `Name: ${scheduledTask.name}, Group: ${scheduledTask.group}`;
+            this.props.update();
             this.props.showNotification("Successfully Created Scheduled Task!", body);
             return;
         }
@@ -78,6 +79,7 @@ export default class ScheduledTaskForm extends Component {
             group,
             message,
             topic,
+            status: 1,
             mqttMessage
         }
 

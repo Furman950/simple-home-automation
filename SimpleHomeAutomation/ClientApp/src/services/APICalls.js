@@ -22,6 +22,28 @@ function getRequest(endpoint) {
     })
 }
 
+function putRequest(endpoint, body) {
+    return fetch(`http://${apiHost}${endpoint}`, {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: body
+    })
+}
+
+function deleteRequest(endpoint, body) {
+    return fetch(`http://${apiHost}${endpoint}`, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: body
+    })
+}
+
 function publishMessage(topic, message) {
     return postRequest("/mqtt/publish",
         JSON.stringify({ topic, message }));
@@ -44,10 +66,25 @@ function getScheduledTasks() {
     return getRequest("/ScheduledTasks/getAll");
 }
 
+function resumeScheduledTask(name, group) {
+    return putRequest("/ScheduledTasks/resume", JSON.stringify({ name, group }));
+}
+
+function pauseScheduledTask(name, group) {
+    return putRequest("/ScheduledTasks/pause", JSON.stringify({ name, group }));
+}
+
+function deleteScheduledTask(name, group) {
+    return deleteRequest("/ScheduledTasks/delete", JSON.stringify({name, group}));
+}
+
 export {
     publishMessage,
     saveUI,
     getUI,
     saveScheduledTask,
-    getScheduledTasks
+    getScheduledTasks,
+    resumeScheduledTask,
+    pauseScheduledTask,
+    deleteScheduledTask
 }

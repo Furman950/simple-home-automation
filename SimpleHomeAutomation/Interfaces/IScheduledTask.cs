@@ -11,6 +11,8 @@ namespace SimpleHomeAutomation.Services
         Task CreateScheduledTask(ScheduledTask scheduleTask);
         Task DeleteScheduledTask(string name, string group);
         Task UpdateScheduledTask(ScheduledTask scheduleTask);
+        Task ResumeScheduledTask(string name, string group);
+        Task PauseScheduledTask(string name, string group);
         Task Persist();
 
         Task StartScheduler();

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SimpleHomeAutomation.Models;
@@ -56,5 +57,24 @@ namespace SimpleHomeAutomation.Controllers
             await scheduleTaskService.Persist();
             return Ok();
         }
+
+        [HttpPut]
+        [Route("resume")]
+        public async Task<IActionResult> Resume([FromBody] ScheduledTaskKey key)
+        {
+            await scheduleTaskService.ResumeScheduledTask(key.Name, key.Group);
+            await scheduleTaskService.Persist();
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("pause")]
+        public async Task<IActionResult> Pause([FromBody] ScheduledTaskKey key)
+        {
+            await scheduleTaskService.PauseScheduledTask(key.Name, key.Group);
+            await scheduleTaskService.Persist();
+            return Ok();
+        }
+
     }
 }

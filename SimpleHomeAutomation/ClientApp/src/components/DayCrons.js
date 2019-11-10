@@ -72,7 +72,7 @@ export default class DayCrons extends Component {
 
         let days = this.getSelectedDays(this.state.dayCheckedMap);
 
-        return `0 ${timeParts[1]} ${timeParts[0]} ? ${days} *`;
+        return `0 ${timeParts[1]} ${timeParts[0]} ? * ${days} *`;
     }
 
     dayCheckboxClick = (e) => {
@@ -82,7 +82,7 @@ export default class DayCrons extends Component {
 
         let days = this.getSelectedDays(dayCheckedMap);
         let timeParts = this.state.time.split(':');
-        let crons = `0 ${timeParts[1]} ${timeParts[0]} ? ${days} *`;
+        let crons = `0 ${timeParts[1]} ${timeParts[0]} ? * ${days} *`;
         this.props.updateCrons(crons, IntervalType.day);
     }
 

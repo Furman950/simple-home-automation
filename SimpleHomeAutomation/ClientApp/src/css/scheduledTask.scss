@@ -7,8 +7,8 @@
     color: white;
 }
 
-.scheduled-task-container {
-    background-color: $scheduledt-task-container-color;
+.scheduled-task-card {
+    margin-bottom: 15px;
 }
 
 .unselected {
@@ -16,5 +16,9 @@
 }
 
 .intervalType:hover {
+    cursor: pointer;
+}
+
+.pointer:hover {
     cursor: pointer;
 }

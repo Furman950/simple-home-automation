@@ -31,9 +31,13 @@ function UIBuilder(uiObjects) {
     return controls;
 };
 
-function scheduledTaskBuilder(scheduledTaskObjects) {
+function scheduledTaskBuilder(scheduledTaskObjects, update, notification) {
     return Object.keys(scheduledTaskObjects).map((key, index) =>
-        <ScheduledTaskGroup key={index} groupName={key} scheduledTasksList={scheduledTaskObjects[key]} />
+        <ScheduledTaskGroup key={index}
+            groupName={key}
+            scheduledTasksList={scheduledTaskObjects[key]}
+            update={update}
+            showNotification={notification} />
     );
 }
 

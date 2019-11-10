@@ -17,7 +17,9 @@ export default class ScheduledTasks extends Component {
         }
     }
 
-    componentDidMount() {
+    componentDidMount() { this.update(); }
+
+    update = () => {
         getScheduledTasks()
             .then(res => res.json())
             .then(json => {
@@ -47,7 +49,7 @@ export default class ScheduledTasks extends Component {
     });
 
     render() {
-        let scheduledTasks = scheduledTaskBuilder(this.state.scheduledTaskJSON);
+        let scheduledTasks = scheduledTaskBuilder(this.state.scheduledTaskJSON, this.update, this.showNotification);
         return (
             <Container>
                 <Notification show={this.state.showNotification} close={this.closeNotification} header={this.state.notificationHeader} body={this.state.notificationBody} />
@@ -57,7 +59,7 @@ export default class ScheduledTasks extends Component {
                 </div>
 
                 <Fab onClick={this.handleShow} />
-                <ScheduledTaskForm show={this.state.show} handleClose={this.handleClose} showNotification={this.showNotification} />
+                <ScheduledTaskForm show={this.state.show} handleClose={this.handleClose} showNotification={this.showNotification} update={this.update}/>
             </Container>
         )
     }

@@ -24,17 +24,17 @@ export class Nav extends Component {
   }
 
   componentDidMount() {
-    this.state.closeNav = 'closeNav'
+    this.state.closeNav = 'closeNav the-nav'
   }
 
   render() {
     return (
-      <Container>
+      <Container >
         <Burger onClick={this.props.toggleNavbar} />
 
         <nav
           id="nav"
-          className={this.props.collapsed ? this.state.closeNav : 'openNav'}
+          className={this.props.collapsed ? this.state.closeNav : 'openNav the-nav'}
         >
           <h4 className="text-center text-color">Simple Home Automation</h4>
           <NavItem onClick={this.props.toggleNavbar}>
