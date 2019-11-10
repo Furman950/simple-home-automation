@@ -21,11 +21,18 @@ function getUIControl(controlName) {
     }
 }
 
-function UIBuilder(uiObjects) {
+function UIBuilder(uiObjects, update, deleteMode, setDeleteMode, showNotification) {
     let controls = [];
     uiObjects.forEach((obj, i) => {
         const Control = getUIControl(obj.control.componentName);
-        controls.push(<Control key={i} data={obj.control} theClasses={"flex-item"} />)
+        controls.push(<Control key={i}
+            data={obj.control}
+            theClasses={"flex-item control-background text-color"}
+            deleteMode={deleteMode}
+            update={update}
+            setDeleteMode={setDeleteMode}
+            showNotification={showNotification}
+        />)
     })
 
     return controls;

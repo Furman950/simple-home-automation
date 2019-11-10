@@ -10,5 +10,6 @@ namespace SimpleHomeAutomation.Services
     {
         Task Save(UIControl uiControls);
         Task<List<UIControl>> Get();
+        Task Delete(string id);
     }
 }

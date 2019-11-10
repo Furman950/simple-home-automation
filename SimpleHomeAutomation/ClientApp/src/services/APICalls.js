@@ -57,6 +57,11 @@ function getUI() {
     return getRequest("/ui/get");
 }
 
+function deleteControl(id) {
+    console.log(JSON.stringify(id));
+    return deleteRequest("/ui/delete", JSON.stringify(id));
+}
+
 function saveScheduledTask(scheduledTask) {
     return postRequest("/ScheduledTasks/create", JSON.stringify(scheduledTask));
 }
@@ -82,6 +87,7 @@ export {
     publishMessage,
     saveUI,
     getUI,
+    deleteControl,
     saveScheduledTask,
     getScheduledTasks,
     resumeScheduledTask,

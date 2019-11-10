@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import Fab from '../components/Fab';
-import ControlForm from '../components/ControlForm';
-import { saveUI, getUI } from '../services/APICalls';
+import ControlModal from '../components/ControModal';
+import { getUI } from '../services/APICalls';
 import { UIBuilder } from '../util/UIBuilder';
+import Notification from '../components/Notification';
 
 export default class Home extends Component {
   static displayName = Home.name;
@@ -11,11 +12,24 @@ export default class Home extends Component {
     this.state = {
       uiJSON: [],
       show: false,
-      showConfig: false
+      showConfig: false,
+      deleteMode: false,
+      showNotification: false,
     }
   }
 
   componentDidMount() {
+    this.getUI();
+  }
+
+  handleShow = () => this.setState({ show: true })
+  handleClose = () => this.setState({ show: false, showConfig: false })
+  hideConfig = () => this.setState({ showConfig: false })
+  showConfig = () => this.setState({ showConfig: true })
+
+  deleteMode = (value) => this.setState({ deleteMode: value })
+
+  getUI = async () => {
     getUI()
       .then(res => res.json())
       .then(json => {
@@ -24,19 +38,33 @@ export default class Home extends Component {
       .catch(err => console.log(err));
   }
 
-  handleShow = () => this.setState({ show: true })
-  handleClose = () => this.setState({ show: false, showConfig: false })
-  hideConfig = () => this.setState({ showConfig: false })
-  showConfig = () => this.setState({ showConfig: true })
-
   addControl = (control) => {
-    let uiJSON = [...this.state.uiJSON, control]
-    this.setState({ uiJSON: uiJSON });
-    saveUI(control);
+    let uiJSON = [...this.state.uiJSON, control];
+    this.setState({ uiJSON });
   }
 
+  showNotification = (header, body) => {
+    this.setState({
+      showNotification: true,
+      notificationHeader: header,
+      notificationBody: body
+    })
+  }
+
+  closeNotification = () => this.setState({
+    showNotification: false,
+    notificationHeader: "",
+    notificationBody: ""
+  });
+
   render() {
-    let controls = UIBuilder(this.state.uiJSON)
+    let controls = UIBuilder(
+      this.state.uiJSON,
+      this.getUI,
+      this.state.deleteMode,
+      this.deleteMode,
+      this.showNotification
+    );
 
     return (
       <div>
@@ -44,8 +72,9 @@ export default class Home extends Component {
         <div className="flex-container">
           {controls}
         </div>
+        <Notification show={this.state.showNotification} close={this.closeNotification} header={this.state.notificationHeader} body={this.state.notificationBody} />
 
-        <ControlForm
+        <ControlModal
           show={this.state.show}
           showConfig={this.state.showConfig}
           unhideConfig={this.showConfig}

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Modal, Button, Col, } from 'react-bootstrap';
 import Controls from './controls/controls';
-import ControlConfiguration from './ControlConfiguration';
-import { getUIControl } from '../util/UIBuilder';
+import ControlForm from './ControForm';
+import { saveUI } from '../services/APICalls';
 
-export default class ControlForm extends Component {
+export default class ControlModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -13,16 +13,43 @@ export default class ControlForm extends Component {
     }
 
     addControl = () => {
-        if (this.state.control.topic === undefined) {
-            alert("Publish topic is required, it cannot start with a '/'\n\nExample:\n\nhouse/bedroom/light")
-            return;
-        }
-
         this.props.addControl({ control: this.state.control })
         this.props.handleClose();
         this.setState({
             control: {}
         })
+    }
+
+    saveControl = async () => {
+        console.log(this.state.control);
+        console.log(JSON.stringify(this.state.control));
+        let response = await saveUI({ control: this.state.control }).catch(err => {
+            console.log("ERROR");
+            console.log(err);
+        });
+
+        if (response === undefined) {
+            console.log("Error happened trying to save control, please make sure the server is runnin");
+            return;
+        }
+
+        console.log(response);
+
+        if (response.ok) {
+            console.log("Saved");
+            let id = await response.json();
+            console.log(`Body: ${id}`);
+            this.state.control["id"] = id;
+            console.log("Control added! ControlModal")
+            console.log(this.state.control);
+            this.props.addControl({ control: this.state.control });
+            this.props.handleClose();
+            this.setState({ control: {} });
+
+            return;
+        }
+
+        window.alert("HTTP-Error: " + response.status);
     }
 
     addControlData = (key, value) => {
@@ -38,7 +65,7 @@ export default class ControlForm extends Component {
     render() {
         let buttons = [];
         if (this.props.showConfig) {
-            buttons.push(<Button key="1" variant="primary" onClick={this.addControl}>Add</Button>)
+            buttons.push(<Button key="1" variant="primary" type="submit" form="form">Add</Button>)
             buttons.push(<Button key="2" variant="secondary" onClick={this.props.hideConfig}>Go Back</Button>);
         }
 
@@ -57,8 +84,12 @@ export default class ControlForm extends Component {
                     </Col>
                 </Modal.Header>
                 <Modal.Body>
+                    {/* {errorMessage} */}
                     {this.props.showConfig ?
-                        <ControlConfiguration addControlData={this.addControlData} componentName={this.state.control.componentName} /> :
+                        <ControlForm
+                            addControlData={this.addControlData}
+                            componentName={this.state.control.componentName}
+                            saveControl={this.saveControl} /> :
                         <Controls addControlData={this.addControlData} />}
 
                 </Modal.Body>
