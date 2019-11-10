@@ -90,7 +90,7 @@ namespace SimpleHomeAutomation.Services
         public async Task CreateScheduledTask(ScheduledTask scheduleTask)
         {
             if (await JobExists(scheduleTask.Name, scheduleTask.Group))
-                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Job with Name: '{scheduleTask.Name}' and Group: '{scheduleTask.Group}' already exist!");
+                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Scheduled Task with Name: '{scheduleTask.Name}' and Group: '{scheduleTask.Group}' already exist!");
                 
             logger.Log($"Creating Scheduled Task -> {scheduleTask.Name}");
             IJobDetail job = JobBuilder.Create<ScheduledTaskJob>()
@@ -116,7 +116,7 @@ namespace SimpleHomeAutomation.Services
         {
             bool jobExists = await JobExists(name, group);
             if (!jobExists)
-                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Job with Name: '{name}' and Group: '{group}' does not exist!");
+                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Scheduled Task with Name: '{name}' and Group: '{group}' does not exist!");
             var jobKey = new JobKey(name, group);
             await scheduler.DeleteJob(jobKey);
         }
@@ -172,7 +172,7 @@ namespace SimpleHomeAutomation.Services
         {
             JobKey jobKey = new JobKey(name, group);
             IJobDetail jobDetail = await scheduler.GetJobDetail(jobKey) ??
-                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Job with Name: '{name}' and Group: '{group}' does not exist!");
+                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Scheduled Task with Name: '{name}' and Group: '{group}' does not exist!");
 
             var triggers = await scheduler.GetTriggersOfJob(jobKey);
             var cronsList = new List<string>();

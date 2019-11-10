@@ -22,7 +22,7 @@ export default class ControlConfiguration extends Component {
                     <Form.Label>Publish Topic*</Form.Label>
                     <Form.Control
                         type="text"
-                        pattern="^[A-Za-z][A-Za-z\/-]*"
+                        pattern="^[A-Za-z0-9]+(\/[A-za-z0-9-]*)*[A-za-z0-9]$"
                         placeholder="Exmaple 'house/bedroom/light'"
                         onChange={this.onChange}
                         name="topic"

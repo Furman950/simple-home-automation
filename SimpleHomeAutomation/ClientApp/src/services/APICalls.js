@@ -32,16 +32,16 @@ function saveUI(uiJSON) {
 }
 
 function getUI() {
-    return getRequest("/ui/get")
+    return getRequest("/ui/get");
 }
 
 function saveScheduledTask(scheduledTask) {
-    return postRequest("ScheduledTasks/create", JSON.stringify())
+    return postRequest("/ScheduledTasks/create", JSON.stringify(scheduledTask));
 }
 
 
 function getScheduledTasks() {
-    return getRequest("/ScheduledTasks/getAll")
+    return getRequest("/ScheduledTasks/getAll");
 }
 
 export {
