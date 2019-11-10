@@ -4,6 +4,7 @@ import ControlModal from '../components/ControModal';
 import { getUI } from '../services/APICalls';
 import { UIBuilder } from '../util/UIBuilder';
 import Notification from '../components/Notification';
+import MiddleOfScreenText from '../components/MiddleOfScreenText';
 
 export default class Home extends Component {
   static displayName = Home.name;
@@ -65,6 +66,10 @@ export default class Home extends Component {
       this.deleteMode,
       this.showNotification
     );
+
+    if (controls.length === 0) {
+      controls.push(<MiddleOfScreenText text="No controls yet..." />)
+    }
 
     return (
       <div>

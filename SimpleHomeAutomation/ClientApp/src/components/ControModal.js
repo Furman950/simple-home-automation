@@ -84,7 +84,6 @@ export default class ControlModal extends Component {
                     </Col>
                 </Modal.Header>
                 <Modal.Body>
-                    {/* {errorMessage} */}
                     {this.props.showConfig ?
                         <ControlForm
                             addControlData={this.addControlData}

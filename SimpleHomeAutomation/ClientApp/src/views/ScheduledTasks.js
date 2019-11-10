@@ -5,6 +5,7 @@ import ScheduledTaskForm from '../components/ScheduledTaskForm';
 import { scheduledTaskBuilder } from '../util/UIBuilder';
 import { getScheduledTasks } from '../services/APICalls';
 import Notification from '../components/Notification';
+import MiddleOfScreenText from '../components/MiddleOfScreenText';
 
 
 export default class ScheduledTasks extends Component {
@@ -50,6 +51,10 @@ export default class ScheduledTasks extends Component {
 
     render() {
         let scheduledTasks = scheduledTaskBuilder(this.state.scheduledTaskJSON, this.update, this.showNotification);
+
+        if (scheduledTasks.length === 0) {
+            scheduledTasks.push(<MiddleOfScreenText text="No Scheduled Tasks yet..." />)
+        }
         return (
             <Container>
                 <Notification show={this.state.showNotification} close={this.closeNotification} header={this.state.notificationHeader} body={this.state.notificationBody} />
