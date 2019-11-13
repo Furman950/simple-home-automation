@@ -13,7 +13,7 @@ namespace SimpleHomeAutomation.Annotations
         {
             List<string> cronsList = value as List<string>;
 
-            if (cronsList is null || cronsList.Count == 0)
+            if (cronsList is null)
                 return false;
 
             foreach(var cron in cronsList)

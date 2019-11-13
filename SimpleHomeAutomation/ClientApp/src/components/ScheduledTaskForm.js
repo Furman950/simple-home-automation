@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Modal, Button, Col, Form } from 'react-bootstrap';
+import SecondsCrons from './SecondsCrons';
 import MinuteCrons from './MinuteCrons';
 import DayCrons from './DayCrons';
 import { IntervalType } from '../util/const';
@@ -17,6 +18,7 @@ export default class ScheduledTaskForm extends Component {
             group: "",
             message: "",
             topic: "",
+            interval: 0,
 
             intervalType: IntervalType.minute,
             validated: false,
@@ -32,10 +34,24 @@ export default class ScheduledTaskForm extends Component {
     updateInterval = (intervalType) => this.setState({ intervalType: intervalType })
 
     updateCrons = (crons, intervalType) => {
-        this.setState({
-            crons: [crons],
-            intervalType: intervalType,
-        });
+        if (intervalType == IntervalType.seconds) {
+            console.log('Second interval type')
+            console.log(crons);
+            this.setState({
+                crons: [],
+                interval: crons,
+                intervalType: intervalType,
+            });
+        }
+        else {
+            console.log('Normal interval type')
+            this.setState({
+                crons: [crons],
+                interval: 0,
+                intervalType: intervalType,
+            });
+        }
+
     }
 
     saveScheduledTask = async (e) => {
@@ -68,6 +84,7 @@ export default class ScheduledTaskForm extends Component {
         let group = this.state.group;
         let message = this.state.message;
         let topic = this.state.topic;
+        let interval = Number(this.state.interval);
         let mqttMessage = {
             topic: this.state.topic,
             message: this.state.message
@@ -79,9 +96,11 @@ export default class ScheduledTaskForm extends Component {
             group,
             message,
             topic,
+            interval,
             status: 1,
             mqttMessage
         }
+        console.log(scheduledTask);
 
         return scheduledTask;
     }
@@ -109,6 +128,7 @@ export default class ScheduledTaskForm extends Component {
             group: "",
             message: "",
             topic: "",
+            interval: 0,
 
             intervalType: IntervalType.minute,
             validated: false,
@@ -196,6 +216,9 @@ export default class ScheduledTaskForm extends Component {
                         </Form.Row>
 
                         <Form.Row>
+                            <SecondsCrons
+                                intervalType={this.state.intervalType}
+                                updateCrons={this.updateCrons} />
                             <MinuteCrons
                                 intervalType={this.state.intervalType}
                                 updateCrons={this.updateCrons} />

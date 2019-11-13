@@ -1,5 +1,6 @@
 ﻿using SimpleHomeAutomation.Annotations;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace SimpleHomeAutomation.Models
@@ -16,6 +17,9 @@ namespace SimpleHomeAutomation.Models
 
         [Required]
         public int Status { get; set; }
+
+        [DefaultValue(0)]
+        public int Interval { get; set; }
 
         [Required]
         public MQTTMessage mqttMessage { get; set; }

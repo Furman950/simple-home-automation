@@ -35,7 +35,11 @@ namespace SimpleHomeAutomation.Controllers
         [Route("create")]
         public async Task<IActionResult> Create([FromBody] ScheduledTask scheduleTask)
         {
-            await scheduleTaskService.CreateScheduledTask(scheduleTask);
+            if (scheduleTask.Interval == 0)
+                await scheduleTaskService.CreateScheduledTask(scheduleTask);
+            else
+                await scheduleTaskService.CreateSimpleScheduledTask(scheduleTask);
+
             await scheduleTaskService.Persist();
             return Ok();
         }

@@ -71,7 +71,15 @@ namespace SimpleHomeAutomation.Services
             {
                 foreach (var scheduledTask in scheduledTaskList)
                 {
-                    await CreateScheduledTask(scheduledTask);
+                    if (scheduledTask.Crons.Count == 0)
+                    {
+                        await CreateSimpleScheduledTask(scheduledTask);
+                    }
+                    else
+                    {
+                        await CreateScheduledTask(scheduledTask);
+                    }
+                    
                 }
             }
         }
@@ -87,31 +95,55 @@ namespace SimpleHomeAutomation.Services
         }
         #endregion 
 
-        public async Task CreateScheduledTask(ScheduledTask scheduleTask)
+        public async Task CreateScheduledTask(ScheduledTask scheduledTask)
         {
-            if (await JobExists(scheduleTask.Name, scheduleTask.Group))
-                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Scheduled Task with Name: '{scheduleTask.Name}' and Group: '{scheduleTask.Group}' already exist!");
+            if (await JobExists(scheduledTask.Name, scheduledTask.Group))
+                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Scheduled Task with Name: '{scheduledTask.Name}' and Group: '{scheduledTask.Group}' already exist!");
 
-            logger.Log($"Creating Scheduled Task -> {scheduleTask.Name}");
+            logger.Log($"Creating Scheduled Task -> {scheduledTask.Name}");
             IJobDetail job = JobBuilder.Create<ScheduledTaskJob>()
-                .WithIdentity(scheduleTask.Name, scheduleTask.Group)
-                .UsingJobData(MESSAGE, scheduleTask.mqttMessage.Message)
-                .UsingJobData(TOPIC, scheduleTask.mqttMessage.Topic)
+                .WithIdentity(scheduledTask.Name, scheduledTask.Group)
+                .UsingJobData(MESSAGE, scheduledTask.mqttMessage.Message)
+                .UsingJobData(TOPIC, scheduledTask.mqttMessage.Topic)
                 .Build();
 
-            foreach (var cron in scheduleTask.Crons)
+            foreach (var cron in scheduledTask.Crons)
             {
                 ITrigger trigger = TriggerBuilder.Create()
-                   .WithIdentity(Guid.NewGuid().ToString(), scheduleTask.Group)
+                   .WithIdentity(Guid.NewGuid().ToString(), scheduledTask.Group)
                    .StartNow()
                    .WithCronSchedule(cron, x => x.WithMisfireHandlingInstructionDoNothing())
                    .Build();
-                logger.Log($"Scheduling job -> With Name: '{scheduleTask.Name}', Group: '{scheduleTask.Group}");
+                logger.Log($"Scheduling job -> With Name: '{scheduledTask.Name}', Group: '{scheduledTask.Group}");
                 await scheduler.ScheduleJob(job, trigger);
 
-                if (scheduleTask.Status == 0)
-                    await PauseScheduledTask(scheduleTask.Name, scheduleTask.Group);
+                if (scheduledTask.Status == 0)
+                    await PauseScheduledTask(scheduledTask.Name, scheduledTask.Group);
             }
+        }
+
+        public async Task CreateSimpleScheduledTask(ScheduledTask scheduledTask)
+        {
+            if (await JobExists(scheduledTask.Name, scheduledTask.Group))
+                throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, $"Scheduled Task with Name: '{scheduledTask.Name}' and Group: '{scheduledTask.Group}' already exist!");
+
+            logger.Log($"Creating Simple Scheduled Task -> {scheduledTask.Name}");
+            IJobDetail job = JobBuilder.Create<ScheduledTaskJob>()
+                .WithIdentity(scheduledTask.Name, scheduledTask.Group)
+                .UsingJobData(MESSAGE, scheduledTask.mqttMessage.Message)
+                .UsingJobData(TOPIC, scheduledTask.mqttMessage.Topic)
+                .Build();
+
+            ITrigger trigger = TriggerBuilder.Create()
+                .WithIdentity(Guid.NewGuid().ToString(), scheduledTask.Group)
+                .StartNow()
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInSeconds(scheduledTask.Interval)
+                    .WithMisfireHandlingInstructionIgnoreMisfires()
+                    .RepeatForever())
+                .Build();
+
+            await scheduler.ScheduleJob(job, trigger);
         }
 
         public async Task DeleteScheduledTask(string name, string group)
@@ -143,16 +175,27 @@ namespace SimpleHomeAutomation.Services
 
                     var cronsList = new List<string>();
                     int status = 0;
+                    int simpleTriggerInterval = -1;
 
                     foreach (var trigger in triggers)
                     {
-                        ITrigger triggerKey = trigger as ITrigger;
-                        var triggerState = await scheduler.GetTriggerState(triggerKey.Key);
-                        status = triggerState == TriggerState.Paused ? 0 : 1;
+                        ISimpleTrigger simpleTrigger = trigger as ISimpleTrigger;
+                        if (simpleTrigger != null)
+                        {
+                            simpleTriggerInterval = (int)simpleTrigger.RepeatInterval.TotalSeconds;
+                            var triggerState = await scheduler.GetTriggerState(simpleTrigger.Key);
+                            status = triggerState == TriggerState.Paused ? 0 : 1;
+                        }
+                        else
+                        {
+                            ITrigger triggerKey = trigger as ITrigger;
+                            var triggerState = await scheduler.GetTriggerState(triggerKey.Key);
+                            status = triggerState == TriggerState.Paused ? 0 : 1;
 
 
-                        ICronTrigger cronTrigger = trigger as ICronTrigger;
-                        cronsList.Add(cronTrigger.CronExpressionString);
+                            ICronTrigger cronTrigger = trigger as ICronTrigger;
+                            cronsList.Add(cronTrigger.CronExpressionString);
+                        }
                     }
 
                     list.Add(new ScheduledTask
@@ -161,6 +204,7 @@ namespace SimpleHomeAutomation.Services
                         Group = group,
                         Crons = cronsList,
                         Status = status,
+                        Interval = simpleTriggerInterval,
                         mqttMessage = new MQTTMessage
                         {
                             Message = jobDetail.JobDataMap.GetString(MESSAGE),
@@ -218,8 +262,8 @@ namespace SimpleHomeAutomation.Services
 
             JobKey jobKey = new JobKey(name, group);
             var triggers = await scheduler.GetTriggersOfJob(jobKey);
-            
-            foreach(var trigger in triggers)
+
+            foreach (var trigger in triggers)
             {
                 await scheduler.ResumeTrigger(trigger.Key);
             }
