@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/addNewControl.scss';
+import '../css/addNewControl.css';
 
 export default function Fab(props) {
     return (

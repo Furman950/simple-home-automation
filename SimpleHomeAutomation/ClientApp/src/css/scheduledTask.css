@@ -1,7 +1,5 @@
-@import './master';
-
 .group-container {
-    background-color: $background-color-light;
+    background-color: rgb(95, 93, 97);
     margin-bottom: 15px;
     border-radius: 6px;
     color: white;

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Container, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import '../css/navMenu.scss';
+import '../css/navMenu.css';
 
 const Burger = (props) => {
   return (

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router';
 import { Layout } from './components/Layout';
-import './css/main.scss';
+import './css/main.css';
 
 import Home from './views/Home';
 import ScheduledTasks from './views/ScheduledTasks';

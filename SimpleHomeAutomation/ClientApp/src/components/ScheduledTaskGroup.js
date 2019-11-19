@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ScheduledTask from './ScheduledTask';
 import { Container } from 'reactstrap';
-import '../css/scheduledTask.scss';
+import '../css/scheduledTask.css';
 export default class ScheduledTaskGroup extends Component {
     constructor(props) {
         super(props);

@@ -1,5 +1,4 @@
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
-@import './master';
 
 .fab-container {
     bottom: 10vh;
@@ -20,7 +19,7 @@
   margin: 20px auto 0;
   position: relative;
   text-decoration: none;
-  background-color: $accent;
+  background-color: rgb(77, 207, 216);;
 }
 
 .flex-container {

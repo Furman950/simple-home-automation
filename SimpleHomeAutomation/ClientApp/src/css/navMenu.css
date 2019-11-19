@@ -1,6 +1,4 @@
-﻿@import './master';
-
-.burger-button {
+﻿.burger-button {
   position: fixed;
   width: 30px;
   height: 30px;
@@ -14,7 +12,7 @@
   height: 15%;
   left: 0px;
   right: 0px;
-  background-color: $base-color;
+  background-color: white;
 }
 
 @media (max-width: 400px){
@@ -34,7 +32,7 @@
 }
 
 #nav {
-  background-color: $background-color;
+  background-color: rgb(45, 45, 45);
   position: fixed;
   height: 100%;
   width: 20%;
